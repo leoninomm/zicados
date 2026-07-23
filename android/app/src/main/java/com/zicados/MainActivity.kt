@@ -1,4 +1,4 @@
-package com.zicados
+package com.leonino.zicados
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

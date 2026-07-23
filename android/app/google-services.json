@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "913133243168",
+    "project_id": "zicados",
+    "storage_bucket": "zicados.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913133243168:android:f668a99d6ad35528ece545",
+        "android_client_info": {
+          "package_name": "com.leonino.zicados"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "913133243168-p9iv5ms86ba0kkao5h3i4jc67ojavcoq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXzofKJG57lnQabe7BnU4fvmh8VEDN1BM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "913133243168-p9iv5ms86ba0kkao5h3i4jc67ojavcoq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
