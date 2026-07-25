@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "913133243168-m64spc5o675rhjekjbf196hcmdl7gira.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.leonino.zicados",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "913133243168-p9iv5ms86ba0kkao5h3i4jc67ojavcoq.apps.googleusercontent.com",
           "client_type": 3
         }
