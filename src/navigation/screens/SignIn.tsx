@@ -1,25 +1,27 @@
 import { useState } from 'react';
 import { View, TextInput, Pressable, StyleSheet, Image } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { signIn, googleSignIn } from '../../store/auth/authThunk';
 import { useTheme } from '../../hooks/useTheme';
+import OuterScreenContainer from '../../components/ScreenContainers/OuterScreenContainer';
+import Eye from '../../components/Icons/Eye';
+import EyeSlash from '../../components/Icons/EyeSlash';
 import TextField from '../../components/Textfield';
-import Logo from '../../assets/zicados-logo.png';
 import Google from '../../assets/google.png';
 
 import { Screens } from '../../utils/types';
-import type { AppDispatch } from '../../store/store';
+import type { AppDispatch, RootState } from '../../store/store';
 import type { Theme } from '../../utils/theme';
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
+    const { loading } = useSelector((state: RootState) => state.authReducer);
     const dispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
     const theme = useTheme();
 
     const handleLogin = () => {
@@ -31,14 +33,7 @@ const SignIn = () => {
     const styles = Styles(theme);
 
     return (
-        <View style={{
-            ...styles.container,
-            paddingTop: insets.top + 100,
-            paddingRight: insets.right,
-            paddingBottom: insets.bottom,
-            paddingLeft: insets.left
-        }}>
-            <Image source={Logo} style={styles.logo} />
+        <OuterScreenContainer loading={loading}>
             <View>
                 <TextField>Email:</TextField>
                 <TextInput
@@ -49,12 +44,17 @@ const SignIn = () => {
             </View>
             <View>
                 <TextField>Senha:</TextField>
-                <TextInput
-                    value={password}
-                    onChangeText={setPassword}
-                    style={styles.input}
-                    secureTextEntry
-                />
+                <View style={styles.inputField}>
+                    <TextInput
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={!showPassword}
+                        style={styles.innerInput}
+                    />
+                    <Pressable onPress={() => setShowPassword((prev) => !prev)}>
+                        {showPassword ? <EyeSlash /> : <Eye />}
+                    </Pressable>
+                </View>
             </View>
             <Pressable onPress={handleLogin} style={styles.button}>
                 <TextField>Logar</TextField>
@@ -66,7 +66,7 @@ const SignIn = () => {
                 <Image source={Google} style={{height: 20, width: 20}}/>
                 <TextField>Faça login com Google</TextField>
             </Pressable>
-        </View>
+        </OuterScreenContainer>
     );
 };
 
@@ -90,6 +90,25 @@ const Styles = (theme: Theme) => StyleSheet.create({
         borderRadius: 32,
         backgroundColor: 'white',
         padding: 8,
+        fontSize: 16,
+        fontFamily: 'Inter',
+    },
+    inputField: {
+        width: 300,
+        height: 40,
+        borderWidth: 2,
+        borderColor: theme.border,
+        borderRadius: 32,
+        backgroundColor: 'white',
+        padding: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    innerInput: {
+        width: 250,
+        height: 40,
+        color: theme.text,
         fontSize: 16,
         fontFamily: 'Inter',
     },

@@ -4,7 +4,7 @@ import type { RootState } from '../store/store';
 export const useIsSignedIn = () => {
     const { user } = useSelector((state: RootState) => state.authReducer);
 
-    return !!user;
+    return !!user && !!user.displayName && !!user.photoURL;
 };
 
 export const useIsSignedOut = () => {
@@ -16,5 +16,5 @@ export const useIsSignedOut = () => {
 export const useIsProfileSet = () => {
     const { user } = useSelector((state: RootState) => state.authReducer);
 
-    return !!user && !!!user?.displayName;
+    return !!user && !!!user?.displayName && !!!user?.photoURL;
 };

@@ -1,20 +1,24 @@
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation, DrawerActions } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-import { useTheme } from '../hooks/useTheme';
-import SplashScreen from './SplashScreen';
-import TextField from './Textfield';
-import Hamburger from './Icons/Hamburger';
+import { useTheme } from '../../hooks/useTheme';
+import SplashScreen from '../SplashScreen';
+import Loading from '../Loading';
+import TextField from '../Textfield';
+import Hamburger from '../Icons/Hamburger';
 
-import type { RootState } from '../store/store';
-import type { Theme } from '../utils/theme';
+import type { RootState } from '../../store/store';
+import type { Theme } from '../../utils/theme';
 
 type Props = {
     children: React.ReactNode,
+    loading?: boolean,
 }
 
-const ScreenContainer = ({ children }: Props) => {
+const ScreenContainer = ({ children, loading = false }: Props) => {
     const { user } = useSelector((state: RootState) => state.authReducer);
+    const navigation = useNavigation();
     const insets = useSafeAreaInsets();
     const theme = useTheme();
 
@@ -37,9 +41,12 @@ const ScreenContainer = ({ children }: Props) => {
                     </View>
                     <TextField bold>{user.displayName}</TextField>
                 </View>
-                <Hamburger />
+                <Pressable onPress={() => navigation.dispatch(DrawerActions.openDrawer)}>
+                    <Hamburger />
+                </Pressable>
             </View>
             {children}
+            {loading && <Loading />}
         </View>
     );
 };

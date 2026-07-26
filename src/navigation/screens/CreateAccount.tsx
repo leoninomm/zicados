@@ -1,26 +1,31 @@
 import { useState } from 'react';
 import { View, TextInput, Pressable, StyleSheet, Image } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createAccount } from '../../store/auth/authThunk';
 import { useTheme } from '../../hooks/useTheme';
+import OuterScreenContainer from '../../components/ScreenContainers/OuterScreenContainer';
 import TextField from '../../components/Textfield';
 import ArrowLeft from '../../components/Icons/ArrowLeft';
-import Logo from '../../assets/zicados-logo.png';
 
 import { Screens } from '../../utils/types';
-import type { AppDispatch } from '../../store/store';
+import type { AppDispatch, RootState } from '../../store/store';
 import type { Theme } from '../../utils/theme';
+import EyeSlash from '../../components/Icons/EyeSlash';
+import Eye from '../../components/Icons/Eye';
 
 const CreateAccount = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepeate, setShowRepeate] = useState(false);
 
+
+
+    const { loading } = useSelector((state: RootState) => state.authReducer);
     const dispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation();
-    const insets = useSafeAreaInsets();
     const theme = useTheme();
 
     const handleCreateAccount = () => {
@@ -33,14 +38,7 @@ const CreateAccount = () => {
     const styles = Styles(theme);
 
     return (
-        <View style={{
-            ...styles.container,
-            paddingTop: insets.top + 100,
-            paddingRight: insets.right,
-            paddingBottom: insets.bottom,
-            paddingLeft: insets.left
-        }}>
-            <Image source={Logo} style={styles.logo} />
+        <OuterScreenContainer loading={loading}>
             <View>
                 <TextField>Email:</TextField>
                 <TextInput
@@ -51,19 +49,31 @@ const CreateAccount = () => {
             </View>
             <View>
                 <TextField>Senha:</TextField>
-                <TextInput
-                    value={password}
-                    onChangeText={setPassword}
-                    style={styles.input}
-                />
+                <View style={styles.inputField}>
+                    <TextInput
+                        value={password}
+                        onChangeText={setPassword}
+                        secureTextEntry={!showPassword}
+                        style={styles.innerInput}
+                    />
+                    <Pressable onPress={() => setShowPassword((prev) => !prev)}>
+                        {showPassword ? <EyeSlash /> : < Eye />}
+                    </Pressable>
+                </View>
             </View>
             <View>
                 <TextField>Repita a senha:</TextField>
-                <TextInput
-                    value={repeatPassword}
-                    onChangeText={setRepeatPassword}
-                    style={styles.input}
-                />
+                <View style={styles.inputField}>
+                    <TextInput
+                        value={repeatPassword}
+                        onChangeText={setRepeatPassword}
+                        secureTextEntry={!showRepeate}
+                        style={styles.innerInput}
+                    />
+                    <Pressable onPress={() => setShowRepeate((prev) => !prev)}>
+                        {showRepeate ? <EyeSlash /> : < Eye />}
+                    </Pressable>
+                </View>
             </View>
             <Pressable onPress={handleCreateAccount} style={styles.button}>
                 <TextField>Criar conta</TextField>
@@ -72,22 +82,11 @@ const CreateAccount = () => {
                 <ArrowLeft />
                 <TextField>Voltar</TextField>
             </Pressable>
-        </View>
+        </OuterScreenContainer>
     );
 };
 
 const Styles = (theme: Theme) => StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        backgroundColor: theme.background,
-        gap: 32,
-    },
-    logo: {
-        height: 100,
-        width: 100,
-        marginBottom: 40,
-    },
     input: {
         width: 300,
         height: 40,
@@ -96,6 +95,25 @@ const Styles = (theme: Theme) => StyleSheet.create({
         borderRadius: 32,
         backgroundColor: 'white',
         padding: 8,
+        fontSize: 16,
+        fontFamily: 'Inter',
+    },
+    inputField: {
+        width: 300,
+        height: 40,
+        borderWidth: 2,
+        borderColor: theme.border,
+        borderRadius: 32,
+        backgroundColor: 'white',
+        padding: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    innerInput: {
+        width: 250,
+        height: 40,
+        color: theme.text,
         fontSize: 16,
         fontFamily: 'Inter',
     },

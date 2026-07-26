@@ -1,40 +1,53 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, createDrawerScreen } from '@react-navigation/drawer';
 import { createStaticNavigation, StaticParamList } from '@react-navigation/native';
 import { useIsSignedIn, useIsSignedOut, useIsProfileSet } from '../hooks/useAuth';
+import DrawerContent from '../components/DrawerContent';
 import SignIn from './screens/SignIn';
 import CreateAccount from './screens/CreateAccount';
 import SetProfile from './screens/SetProfile';
 import Home from './screens/Home';
+import UpdateProfile from './screens/UpdateProfile';
+
+const Drawer = createDrawerNavigator({
+    drawerContent: (props) => <DrawerContent {...props} />,
+    screenOptions: {
+        drawerPosition: 'right',
+        headerShown: false,
+    },
+    screens: {
+        Home: {
+            if: useIsSignedIn,
+            screen: Home,
+        },
+        UpdateProfile: {
+            if: useIsSignedIn,
+            screen: UpdateProfile,
+        },
+    },
+});
 
 const RootStack = createNativeStackNavigator({
+    screenOptions: {
+        headerShown: false,
+    },
     screens: {
+        Drawer: {
+            if: useIsSignedIn,
+            screen: Drawer,
+        },
         SignIn: {
             if: useIsSignedOut,
             screen: SignIn,
-            options: {
-                headerShown: false,
-            }
         },
         CreateAccount: {
             if: useIsSignedOut,
             screen: CreateAccount,
-            options: {
-                headerShown: false,
-            }
         },
         SetProfile: {
             if: useIsProfileSet,
             screen: SetProfile,
-            options: {
-                headerShown: false,
-            },
-        },
-        Home: {
-            if: useIsSignedIn,
-            screen: Home,
-            options: {
-                headerShown: false,
-            }
         },
     },
 });

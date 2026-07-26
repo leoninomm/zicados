@@ -7,6 +7,7 @@ import {
     GoogleAuthProvider,
     updateProfile,
 } from '@react-native-firebase/auth';
+import { getStorage, ref, putFile, getDownloadURL } from '@react-native-firebase/storage';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {
     authenticateUser,
@@ -17,7 +18,8 @@ import {
     setProfileFailed,
 } from './authSlice';
 
-import type { AppDispatch, RootState } from '../store';
+import type { AppDispatch } from '../store';
+import type { ProfilePayload } from '../../utils/types';
 
 export const signIn = (email: string, password: string) => async (dispatch: AppDispatch) => {
     dispatch(authenticateUser());
@@ -65,32 +67,33 @@ export const googleSignIn = () => async (dispatch: AppDispatch) => {
     }
 };
 
-export const setUserProfile = (userName: string, photo: string) => async(dispatch: AppDispatch, getState: () => RootState) => {
+export const setUserProfile = (payload: ProfilePayload, isFileLoaded: boolean) => async(dispatch: AppDispatch) => {
     dispatch(setProfile());
-    const state = getState();
 
     try {
         const auth = getAuth();
         if (auth.currentUser) {
-            const profile = { displayName: userName, photoURL: photo };
+            let photoUrl = payload.photoURL;
+            if (payload.photoURL && isFileLoaded) {
+                const reference = ref(getStorage(), `${auth.currentUser.uid}/profile-picture.png`);
+                await putFile(reference, payload.photoURL);
+                photoUrl = await getDownloadURL(reference);
+            }
+
+            const profile: ProfilePayload = { displayName: payload.displayName, photoURL: photoUrl };
+            if (!payload.displayName) delete profile.displayName;
+            if (!photoUrl) delete profile.photoURL;
             console.log(profile);
             await updateProfile(auth.currentUser, profile);
+            
+            console.log('success');
+            dispatch(setProfileSuccess({
+                userName: auth.currentUser.displayName ?? '',
+                photo: auth.currentUser.photoURL ?? '',
+            }));
         }
-
-        console.log('success');
-        dispatch(setProfileSuccess({ userName, photo }));
     } catch (error) {
         console.log(error);
         dispatch(setProfileFailed((error as Error).message));
-    }
-};
-
-export const logout = () => async (dispatch: AppDispatch) => {
-    dispatch(authenticateUser());
-
-    try {
-        await signOut(getAuth());
-    } catch (error) {
-        console.log(error);
     }
 };
