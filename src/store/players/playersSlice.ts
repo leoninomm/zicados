@@ -34,7 +34,7 @@ export const playersSlice = createSlice({
 export const {
     fetchPlayers,
     fetchPlayersSuccess,
-    fetchPlayersFailed
+    fetchPlayersFailed,
 } = playersSlice.actions;
 
 export default playersSlice.reducer;

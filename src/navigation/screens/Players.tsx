@@ -1,4 +1,5 @@
-import { View, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPlayers } from '../../store/players/playersThunk';
 import TextField from '../../components/Textfield';
@@ -12,24 +13,29 @@ const Players = () => {
     const { players } = useSelector((state: RootState) => state.playersReducer);
     const dispatch = useDispatch<AppDispatch>();
     
-    if (!players.length) dispatch(getPlayers());
+    useEffect(() => {
+        if (!players.length) dispatch(getPlayers());
+    }, [players]);
+
 
     return (
         <InnerScreenContainer>
-            <View style={Styles.content}>
-                {players.map((player) => (
-                    <View style={Styles.playerCard} key={player.uid}>
-                        <View style={Styles.user}>
-                            <Avatar size={52} photo={player.photoURL} />
-                            <TextField>{player.displayName}</TextField>
+            <ScrollView>
+                <View style={Styles.content}>
+                    {players.map((player) => (
+                        <View style={Styles.playerCard} key={player.uid}>
+                            <View style={Styles.user}>
+                                <Avatar size={52} photo={player.photoURL} />
+                                <TextField>{player.displayName}</TextField>
+                            </View>
+                            <View style={Styles.birthday}>
+                                <TextField>{player.birthday}</TextField>
+                                <BirthdayCake />
+                            </View>
                         </View>
-                        <View style={Styles.birthday}>
-                            <TextField>{player.birthday}</TextField>
-                            <BirthdayCake />
-                        </View>
-                    </View>
-                ))}
-            </View>
+                    ))}
+                </View>
+            </ScrollView>
         </InnerScreenContainer>
     );
 };
