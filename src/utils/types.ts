@@ -9,6 +9,7 @@ export enum Drawer {
     Home = 'Home',
     UpdateProfile = 'UpdateProfile',
     Players = 'Players',
+    CreateOpenList = 'CreateOpenList',
 };
 
 export type ProfilePayload = {
@@ -32,4 +33,39 @@ export type Player = {
     displayName: string;
     photoURL: string;
     birthday: string;
+};
+
+export type OpenListParticipant = {
+    uid: string;
+    willAttend: boolean;
+    guests: string[];
+};
+
+export type OpenList = {
+    id: string;
+    owner: string;
+    title: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    location: string;
+    minParticipants: number;
+    maxParticipants: number;
+    participants: OpenListParticipant[];
+    isClosed: boolean;
+};
+
+export enum FBCollections {
+    Users = 'users',
+    OpenList = 'openList',
+    PendingList = 'pendingList',
+    ClosedList = 'closedList',
+};
+
+export enum FBConfig {
+    StartTime = 'startTime',
+    EndTime = 'endTime',
+    Location = 'location',
+    MinParticipants = 'minParticipants',
+    MaxParticipants = 'maxParticipants',
 };

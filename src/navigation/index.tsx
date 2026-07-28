@@ -10,6 +10,7 @@ import SetProfile from './screens/SetProfile';
 import Home from './screens/Home';
 import UpdateProfile from './screens/UpdateProfile';
 import Players from './screens/Players';
+import CreateOpenList from './screens/CreateOpenList';
 
 
 const Drawer = createDrawerNavigator({
@@ -30,6 +31,10 @@ const Drawer = createDrawerNavigator({
         Players: {
             if: useIsSignedIn,
             screen: Players,
+        },
+        CreateOpenList: {
+            if: useIsSignedIn,
+            screen: CreateOpenList,
         },
     },
 });
