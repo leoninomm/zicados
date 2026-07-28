@@ -1,22 +1,25 @@
 import { View, Pressable, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getAuth, signOut } from '@react-native-firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
+import { logout } from '../store/auth/authSlice';
 import TextField from './Textfield';
 import Avatar from './Avatar';
 import ArrowLeft from './Icons/ArrowLeft';
 
 import { Drawer, Screens } from '../utils/types';
-import type { RootState } from '../store/store';
+import type { RootState, AppDispatch } from '../store/store';
 
 const DrawerContent = (props: DrawerContentComponentProps) => {
     const { user } = useSelector((state: RootState) => state.authReducer);
 
+    const dispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation();
 
     const logoutAction = async () => {
         await signOut(getAuth());
+        dispatch(logout());
         props.navigation.closeDrawer();
     }
 

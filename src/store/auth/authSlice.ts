@@ -51,6 +51,11 @@ export const authSlice = createSlice({
         setProfileFailed: (state, action: PayloadAction<string>) => {
             state.loading = false;
             state.error = action.payload;
+        },
+        logout: (state) => {
+            state.birthday = '';
+            state.loading = false;
+            state.error = '';
         }
     }
 });
@@ -64,6 +69,7 @@ export const {
     setProfile,
     setProfileSuccess,
     setProfileFailed,
+    logout,
 } = authSlice.actions;
 
 export default authSlice.reducer;
