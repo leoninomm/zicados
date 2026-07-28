@@ -42,6 +42,13 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                     <TextField>Perfil</TextField>
                 </Pressable>
                 <Pressable
+                    style={Styles.button}
+                    android_ripple={{ color: '#FAFBFB' }}
+                    onPress={() => navigation.navigate(Screens.Drawer, { screen: Drawer.Players })}
+                >
+                    <TextField>Jogadores</TextField>
+                </Pressable>
+                <Pressable
                     style={{ flexDirection: 'row' }}
                     android_ripple={{ color: '#FAFBFB' }}
                     onPress={logoutAction}

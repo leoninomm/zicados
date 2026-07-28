@@ -5,12 +5,14 @@ import type { User } from '@react-native-firebase/auth';
 export interface AuthState {
     loading: boolean;
     user: User | null;
+    birthday: string;
     error: string;
 };
 
 const initialState: AuthState = {
     loading: false,
     user: null,
+    birthday: '',
     error: '',
 };
 
@@ -30,6 +32,9 @@ export const authSlice = createSlice({
             state.loading = false;
             state.user = null;
             state.error = action.payload;
+        },
+        setUserDetails: (state, action: PayloadAction<string>) => {
+            state.birthday = action.payload;
         },
         setProfile: (state) => { state.loading = true },
         setProfileSuccess: (state, action: PayloadAction<{userName: string, photo: string}>) => {
@@ -55,6 +60,7 @@ export const {
     authenticateUser,
     authenticateUserSuccess,
     authenticateUserFailed,
+    setUserDetails,
     setProfile,
     setProfileSuccess,
     setProfileFailed,

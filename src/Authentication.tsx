@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { fetchAuth } from './store/auth/authSlice';
+import { getUserDetails } from './store/auth/authThunk';
 import { Navigation } from './navigation';
 import SplashScreen from './components/SplashScreen';
 
@@ -16,6 +17,7 @@ const Authentication = () => {
         console.log(user);
         dispatch(fetchAuth(user?._user));
         setInitializing(false)
+        dispatch(getUserDetails());
     }
 
     useEffect(() => {

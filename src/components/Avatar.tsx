@@ -6,18 +6,21 @@ import type { RootState } from '../store/store';
 
 type Props = {
     size: number;
+    photo?: string;
 };
 
-const Avatar = ({ size }: Props) => {
+const Avatar = ({ size, photo }: Props) => {
     const { user } = useSelector((state: RootState) => state.authReducer);
 
     const styles = Styles(size);
 
     if (!user || !user.photoURL) return null;
 
+    const photoToRender = photo ? photo : user.photoURL;
+
     return (
         <View style={styles.avatar}>
-            <Image src={user.photoURL} style={styles.image} />
+            <Image src={photoToRender} style={styles.image} />
         </View>
     );
 };

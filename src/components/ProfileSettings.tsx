@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { View, TextInput, StyleSheet, Image, Pressable } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
+import DatePicker from 'react-native-date-picker';
 import { useTheme } from '../hooks/useTheme';
 import TextField from '../components/Textfield';
 import AddPhoto from '../components/Icons/AddPhoto';
@@ -9,11 +11,22 @@ import type { Theme } from '../utils/theme';
 type Props = {
     displayName?: string;
     photoURL?: string;
+    birthday?: string;
     onChangeName: (name: string) => void;
     onChangePhoto: (photo: string) => void;
+    onChangeBirthday: (date: string) => void;
 };
 
-const ProfileSettings = ({ displayName, photoURL, onChangeName, onChangePhoto }: Props) => {
+const ProfileSettings = ({
+    displayName,
+    photoURL,
+    birthday,
+    onChangeName,
+    onChangePhoto,
+    onChangeBirthday,
+}: Props) => {
+    const [openDatePicker, setOpenDatePicker] = useState(false);
+
     const theme = useTheme();
     const styles = Styles(theme);
 
@@ -27,6 +40,12 @@ const ProfileSettings = ({ displayName, photoURL, onChangeName, onChangePhoto }:
         const result = await launchImageLibrary({ mediaType: 'photo' }, callBack);
         // console.log(result);
     };
+
+    const handleDatePicker = (date: Date) => {
+        const dateStr = date.toLocaleDateString('pt-br');
+        onChangeBirthday(dateStr);
+        setOpenDatePicker(false);
+    }
 
     return (
         <View style={{ gap: 32 }}>
@@ -43,6 +62,21 @@ const ProfileSettings = ({ displayName, photoURL, onChangeName, onChangePhoto }:
                 <Pressable onPress={handleImagePicker} style={styles.addImageButton}>
                     {photoURL ? <Image src={photoURL} style={styles.imagePreview} /> : <AddPhoto />}
                 </Pressable>
+            </View>
+            <View style={{ gap: 4 }}>
+                <TextField>Aniversário do jogador:</TextField>
+                <Pressable onPress={() => setOpenDatePicker(true)} style={styles.input}>
+                    <TextField>{birthday || 'Mistério'}</TextField>
+                </Pressable>
+                <DatePicker
+                    modal
+                    open={openDatePicker}
+                    date={new Date()}
+                    mode='date'
+                    locale='pt-br'
+                    onConfirm={(date) => handleDatePicker(date)}
+                    onCancel={() => setOpenDatePicker(false)}
+                />
             </View>
         </View>
     );

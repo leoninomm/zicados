@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAuth } from '@react-native-firebase/auth';
-import { setUserProfile } from '../../store/auth/authThunk';
+import { updateUserProfile } from '../../store/auth/authThunk';
 import { useTheme } from '../../hooks/useTheme';
 import TextField from '../../components/Textfield';
 import ProfileSettings from '../../components/ProfileSettings';
@@ -15,10 +15,11 @@ import type { AppDispatch, RootState } from '../../store/store';
 const UpdateProfile = () => {
     const [name, setName] = useState('');
     const [photo, setPhoto] = useState('');
+    const [birthday, setBirthday] = useState('');
     const [loadedFile, setLoadedFile] = useState(false);
 
     const user = getAuth().currentUser;
-    const { loading } = useSelector((state: RootState) => state.authReducer);
+    const { loading, birthday: userBirthday } = useSelector((state: RootState) => state.authReducer);
     const dispatch = useDispatch<AppDispatch>();
     const theme = useTheme();
 
@@ -34,13 +35,14 @@ const UpdateProfile = () => {
         if (!name) delete payload.displayName;
         if (!photo) delete payload.photoURL;
 
-        dispatch(setUserProfile(payload, loadedFile));
+        dispatch(updateUserProfile({ profile: payload, birthday }, loadedFile));
     };
 
     useEffect(() => {
         if (user) {
             setName(user.displayName || '');
             setPhoto(user.photoURL || '');
+            setBirthday(userBirthday);
         };
     }, []);
 
@@ -52,8 +54,10 @@ const UpdateProfile = () => {
                 <ProfileSettings
                     displayName={name}
                     photoURL={photo}
+                    birthday={birthday}
                     onChangeName={setName}
                     onChangePhoto={hanldeChangePhoto}
+                    onChangeBirthday={setBirthday}
                 />
                 <Pressable onPress={updateProfile} style={styles.button}>
                     <TextField>Atualizar</TextField>

@@ -9,6 +9,8 @@ import CreateAccount from './screens/CreateAccount';
 import SetProfile from './screens/SetProfile';
 import Home from './screens/Home';
 import UpdateProfile from './screens/UpdateProfile';
+import Players from './screens/Players';
+
 
 const Drawer = createDrawerNavigator({
     drawerContent: (props) => <DrawerContent {...props} />,
@@ -24,6 +26,10 @@ const Drawer = createDrawerNavigator({
         UpdateProfile: {
             if: useIsSignedIn,
             screen: UpdateProfile,
+        },
+        Players: {
+            if: useIsSignedIn,
+            screen: Players,
         },
     },
 });

@@ -13,6 +13,7 @@ import type { AppDispatch, RootState } from '../../store/store';
 const SetProfile = () => {
     const [userName, setUserName] = useState('');
     const [photo, setPhoto] = useState('');
+    const [birthday, setBirthday] = useState('');
 
     const { loading } = useSelector((state: RootState) => state.authReducer);
     const dispatch = useDispatch<AppDispatch>();
@@ -21,7 +22,7 @@ const SetProfile = () => {
 
     const updateProfile = () => {
         if (!userName || !photo) return;
-        dispatch(setUserProfile({ displayName: userName, photoURL: photo }, true));
+        dispatch(setUserProfile({ displayName: userName, photoURL: photo, birthday }));
     };
 
     return (
@@ -29,8 +30,10 @@ const SetProfile = () => {
             <ProfileSettings
                 displayName={userName}
                 photoURL={photo}
+                birthday={birthday}
                 onChangeName={setUserName}
                 onChangePhoto={setPhoto}
+                onChangeBirthday={setBirthday}
             />
             <Pressable onPress={updateProfile} style={styles.button}>
                 <TextField>Continuar</TextField>
