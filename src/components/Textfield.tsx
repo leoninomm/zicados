@@ -7,7 +7,7 @@ type Props = {
     bold?: boolean;
     italic?: boolean;
     color?: string;
-    children: string;
+    children: string | string[];
 };
 
 const TextField = ({

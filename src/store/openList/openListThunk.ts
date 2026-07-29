@@ -1,9 +1,12 @@
 import { getAuth } from '@react-native-firebase/auth';
-import { addDoc, collection, getFirestore, onSnapshot, updateDoc, doc } from '@react-native-firebase/firestore';
+import { addDoc, collection, getFirestore, onSnapshot, updateDoc, doc, getDocs, query, where } from '@react-native-firebase/firestore';
 import {
     fetchOpenList,
     fetchOpenListSuccess,
     fetchOpenListFailed,
+    fetchPlayers,
+    fetchPlayersSuccess,
+    fetchPlayersFailed,
     createOpenList,
     createOpenListSuccess,
     createOpenListFailed,
@@ -17,17 +20,40 @@ export const getOpenList = () => async (dispatch: AppDispatch) => {
 
     try {
         const db = getFirestore();
-        onSnapshot(collection(db, 'openList'), (snap: any) => {
-            console.log(snap);
-            const list: OpenList = snap._docs[0]._data;
-            console.log(list);
-            if (list.isClosed) dispatch(fetchOpenListSuccess(undefined));
-            else dispatch(fetchOpenListSuccess(list));
+        const openListRef = collection(db, FBCollections.OpenList);
+        const listQuery = query(openListRef, where('isClosed', '==', false));
+
+        onSnapshot(listQuery, async (snap: any) => {
+            if (!snap._docs.length) dispatch(fetchOpenListSuccess(undefined));
+            else {
+                const list: OpenList = snap._docs[0]._data;
+                dispatch(getOpenListPlayers(list.id));
+                dispatch(fetchOpenListSuccess(list))
+            };
         })
     } catch(error) {
         dispatch(fetchOpenListFailed((error as Error).message));
     }
 }
+
+export const getOpenListPlayers = (id: string) => async (dispatch: AppDispatch) => {
+    dispatch(fetchPlayers());
+
+    try {
+        const db = getFirestore();
+        const playersRef = collection(db, FBCollections.OpenList, id, 'PlayersCol');
+
+        onSnapshot(playersRef, (snap: any) => {
+            if (!snap._docs.length) dispatch(fetchPlayersSuccess([]));
+            else {
+                const players = snap._docs.map((doc: any) => doc._data);
+                dispatch(fetchPlayersSuccess(players));
+            }
+        });
+    } catch (error) {
+        dispatch(fetchPlayersFailed((error as Error).message));
+    }
+};
 
 export const openList = (list: Omit<OpenList, 'owner' | 'id'>) => async (dispatch: AppDispatch) => {
     dispatch(createOpenList());

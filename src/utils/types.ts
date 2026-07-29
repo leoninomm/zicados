@@ -35,7 +35,7 @@ export type Player = {
     birthday: string;
 };
 
-export type OpenListParticipant = {
+export type OpenListPlayer = {
     uid: string;
     willAttend: boolean;
     guests: string[];
@@ -49,9 +49,8 @@ export type OpenList = {
     startTime: string;
     endTime: string;
     location: string;
-    minParticipants: number;
-    maxParticipants: number;
-    participants: OpenListParticipant[];
+    minPlayers: number;
+    maxPlayers: number;
     isClosed: boolean;
 };
 
@@ -66,6 +65,6 @@ export enum FBConfig {
     StartTime = 'startTime',
     EndTime = 'endTime',
     Location = 'location',
-    MinParticipants = 'minParticipants',
-    MaxParticipants = 'maxParticipants',
+    MinPlayers = 'minPlayers',
+    MaxPlayers = 'maxPlayers',
 };

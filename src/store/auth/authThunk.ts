@@ -87,6 +87,7 @@ export const setUserProfile = (payload: SetProfilePayload) => async(dispatch: Ap
             const { uid } = auth.currentUser;
             
             setDoc(doc(collection(db, 'users'), uid), {
+                uid,
                 displayName,
                 photoURL,
                 birthday: payload.birthday,

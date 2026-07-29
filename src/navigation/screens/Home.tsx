@@ -7,6 +7,8 @@ import { useTheme } from '../../hooks/useTheme';
 import InnerScreenContainer from '../../components/ScreenContainers/InnerScreenContainer';
 import TextField from '../../components/Textfield';
 import Plus from '../../components/Icons/Plus';
+import ListHeader from '../../components/ListStructure/ListHeader';
+import ListTabs from '../../components/ListStructure/ListTabs';
 
 import type { AppDispatch, RootState } from '../../store/store';
 import { Theme } from '../../utils/theme';
@@ -34,6 +36,20 @@ const Home = () => {
                         <Plus />
                         <TextField>Abrir lista</TextField>
                     </Pressable>
+                </View>
+            )}
+            {list && (
+                <View style={{ width: '100%', marginTop: 80 }}>
+                    <ListHeader
+                        title={list.title}
+                        date={list.date}
+                        startTime={list.startTime}
+                        endTime={list.endTime}
+                        location={list.location}
+                        minPlayers={list.minPlayers}
+                        maxPlayers={list.maxPlayers}
+                    />
+                    <ListTabs />
                 </View>
             )}
         </InnerScreenContainer>

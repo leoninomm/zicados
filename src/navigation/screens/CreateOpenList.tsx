@@ -21,8 +21,8 @@ const CreateOpenList = () => {
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
     const [location, setLocation] = useState('');
-    const [minParticipants, setMinParticipants] = useState(0);
-    const [maxParticipants, setMaxParticipants] = useState(0);
+    const [minPlayers, setMinPlayers] = useState(0);
+    const [maxPlayers, setMaxPlayers] = useState(0);
     const [date, setDate] = useState('');
 
     const [openDatePicker, setOpenDatePicker] = useState(false);
@@ -38,15 +38,15 @@ const CreateOpenList = () => {
         const dfStartTime = remoteConfig().getValue(FBConfig.StartTime).asString();
         const dfEndTime = remoteConfig().getValue(FBConfig.EndTime).asString();
         const dfLocation = remoteConfig().getValue(FBConfig.Location).asString();
-        const dfMinParticipants = remoteConfig().getValue(FBConfig.MinParticipants).asNumber();
-        const dfMaxParticipants = remoteConfig().getValue(FBConfig.MaxParticipants).asNumber();
+        const dfMinPlayers = remoteConfig().getValue(FBConfig.MinPlayers).asNumber();
+        const dfMaxPlayers = remoteConfig().getValue(FBConfig.MaxPlayers).asNumber();
         const dfDate = getNextSunday();
 
         if (dfStartTime) setStartTime(dfStartTime);
         if (dfEndTime) setEndTime(dfEndTime);
         if (dfLocation) setLocation(dfLocation);
-        if (dfMinParticipants) setMinParticipants(dfMinParticipants);
-        if (dfMaxParticipants) setMaxParticipants(dfMaxParticipants);
+        if (dfMinPlayers) setMinPlayers(dfMinPlayers);
+        if (dfMaxPlayers) setMaxPlayers(dfMaxPlayers);
         const formattedDate = dfDate.toLocaleDateString('pt-br');
         setDate(dfDate.toLocaleDateString('pt-br'));
         const titleDate = formattedDate.split('/')[0] + '/' + formattedDate.split('/')[1]
@@ -82,10 +82,10 @@ const CreateOpenList = () => {
             endTime,
             date,
             location,
-            minParticipants,
-            maxParticipants,
+            minPlayers,
+            maxPlayers,
             isClosed: false,
-            participants: [],
+            players: [],
         };
 
         dispatch(openList(list));
@@ -166,8 +166,8 @@ const CreateOpenList = () => {
                     <View style={{ gap: 4 }}>
                         <TextField>Mínimo de jogadores:</TextField>
                         <TextInput
-                            value={minParticipants.toString()}
-                            onChangeText={(t: string) => setMinParticipants(Math.floor(Number(t)))}
+                            value={minPlayers.toString()}
+                            onChangeText={(t: string) => setMinPlayers(Math.floor(Number(t)))}
                             keyboardType='numeric'
                             style={{ ...styles.input, width: 100 }}
                         />
@@ -176,8 +176,8 @@ const CreateOpenList = () => {
                     <View style={{ gap: 4 }}>
                         <TextField>Máximo de jogadores:</TextField>
                         <TextInput
-                            value={maxParticipants.toString()}
-                            onChangeText={(t: string) => setMaxParticipants(Math.floor(Number(t)))}
+                            value={maxPlayers.toString()}
+                            onChangeText={(t: string) => setMaxPlayers(Math.floor(Number(t)))}
                             keyboardType='numeric'
                             style={{ ...styles.input, width: 100 }}
                         />
