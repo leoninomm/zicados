@@ -44,3 +44,24 @@ export const useHasReplied = () => {
 
     return hasReplied;
 };
+
+export const useStats = () => {
+    const { players } = useSelector((state: RootState) => state.openListReducer);
+    const { guests } = useSelector((state: RootState) => state.openListReducer);
+
+    const attendingPlayers = players.filter((player) => player.willAttend);
+    const absentPlayers = players.filter((player) => !player.willAttend);
+
+    const totalAttending = attendingPlayers.length + guests.length;
+    const totalAbsent = absentPlayers.length;
+    const totalReplies = attendingPlayers.length + absentPlayers.length;
+
+    return { totalAbsent, totalAttending, totalReplies };
+};
+
+export const useIsOwner = () => {
+    const { user } = useSelector((state: RootState) => state.authReducer);
+    const { list } = useSelector((state: RootState) => state.openListReducer);
+
+    return user?.uid === list?.owner;
+}

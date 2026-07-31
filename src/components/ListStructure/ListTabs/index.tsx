@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
+import { OpenListContext } from '../../../contexts/OpenListContext';
+import { useStats } from '../../../hooks/usePlayers';
 import { useModal } from '../../../hooks/useModal';
 import TextField from '../../Textfield';
 import ListPlayers from './ListPlayers';
 import Guests from './Guests';
 import AddGuestModal from '../../Modals/AddGuestModal';
+import Player from '../../Icons/Player';
+import Clipboard from '../../Icons/Clipboard';
+import SittingChair from '../../Icons/SittingChair';
 
 const TABS = [
     {
@@ -25,22 +30,39 @@ const TABS = [
 ];
 
 const ListTabs = () => {
-    const [selectedTab, setSelectedTab] = useState(0);
+    const { currentTab, setCurrentTab } = useContext(OpenListContext);
+    const { totalAbsent, totalAttending, totalReplies } = useStats();
     const { isModalOpen, openModal, closeModal } = useModal();
 
     return (
         <View style={Styles.container}>
             <View style={Styles.tabsRow}>
                 {TABS.map((tab) => (
-                    <Pressable key={tab.id} onPress={() => setSelectedTab(tab.id)} style={TabStyles(selectedTab === tab.id).tab}>
+                    <Pressable key={tab.id} onPress={() => setCurrentTab(tab.id)} style={TabStyles(currentTab === tab.id).tab}>
                         <TextField>{tab.name}</TextField>
                     </Pressable>
                 ))}
             </View>
             <View style={{ flex: 1 }}>
-                {TABS[selectedTab].component}
+                {TABS[currentTab].component}
+                {(totalAbsent || totalAttending || totalReplies) &&(
+                    <View style={Styles.stats}>
+                        <View style={Styles.statItem}>
+                            <Clipboard />
+                            <TextField bold>{totalReplies}</TextField>
+                        </View>
+                        <View style={Styles.statItem}>
+                            <Player />
+                            <TextField bold>{totalAttending}</TextField>
+                        </View>
+                        <View style={Styles.statItem}>
+                            <SittingChair />
+                            <TextField bold>{totalAbsent}</TextField>
+                        </View>
+                    </View>
+                )}
             </View>
-            {selectedTab === 2 && (
+            {currentTab === 2 && (
                 <View style={{ alignItems: 'center' }}>
                     <Pressable style={Styles.button} onPress={openModal}>
                         <TextField>Adicionar convidado</TextField>
@@ -73,6 +95,16 @@ const Styles = StyleSheet.create({
         borderColor: '#030626',
         backgroundColor: '#F2B705'
     },
+    stats: {
+        flexDirection: 'row',
+        gap: 24,
+        marginTop: 16,
+    },
+    statItem: {
+        flexDirection: 'row',
+        gap: 8,
+        alignItems: 'center',
+    }
 });
 
 const TabStyles = (isSelected: boolean) => StyleSheet.create({

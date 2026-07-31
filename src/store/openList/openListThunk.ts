@@ -25,6 +25,9 @@ import {
     createOpenList,
     createOpenListSuccess,
     createOpenListFailed,
+    updateList,
+    updateListSuccess,
+    updateListFailed,
 } from './openListSlice';
 
 import type { AppDispatch, RootState } from '../store';
@@ -76,13 +79,12 @@ export const getOpenListGuests = (id: string) => async (dispatch: AppDispatch) =
 
     try {
         const db = getFirestore();
-        const guestsRef = doc(collection(db, FBCollections.OpenList, id, FBCollections.GuestsCol), 'Guests');
+        const guestsRef = collection(db, FBCollections.OpenList, id, FBCollections.GuestsCol);
 
         onSnapshot(guestsRef, (snap: any) => {
-            console.log('guests snap', snap);
-            if (!snap) dispatch(fetchGuestsSuccess([]));
-            else {
-                console.log(snap._data.guests);
+            if (!snap._exists) {
+                dispatch(fetchGuestsSuccess([]));
+            } else {
                 dispatch(fetchGuestsSuccess(snap._data.guests));
             }
         });
@@ -189,4 +191,25 @@ export const removeGuest = (guest: ListGuest) => async (dispatch: AppDispatch, g
             guests: arrayRemove(guestToRemove)
         });
     }
+};
+
+export const updateListInfo = (newList: Partial<OpenList>) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch(updateList());
+    const state = getState();
+    const { list } = state.openListReducer;
+
+    try {
+        if (list) {
+            const db = getFirestore();
+
+            const listRef = doc(db, FBCollections.OpenList, list.id);
+            await updateDoc(listRef, newList);
+
+            dispatch(updateListSuccess());
+        }
+        return true;
+    } catch (error) {
+        dispatch(updateListFailed((error as Error).message));
+        return false;
+    };
 };

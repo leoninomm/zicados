@@ -6,6 +6,7 @@ import { getOpenList } from '../../store/openList/openListThunk';
 import { getPlayers } from '../../store/players/playersThunk';
 import { useTheme } from '../../hooks/useTheme';
 import { useHasReplied } from '../../hooks/usePlayers';
+import OpenListProvider from '../../contexts/OpenListContext';
 import InnerScreenContainer from '../../components/ScreenContainers/InnerScreenContainer';
 import TextField from '../../components/Textfield';
 import Plus from '../../components/Icons/Plus';
@@ -18,6 +19,7 @@ import type { AppDispatch, RootState } from '../../store/store';
 import { Theme } from '../../utils/theme';
 import { Screens, Drawer } from '../../utils/types';
 import Loading from '../../components/Loading';
+import Empty from '../../components/Empty';
 
 const Home = () => {
     const [initializing, setInitializing] = useState(true);
@@ -39,33 +41,34 @@ const Home = () => {
 
     const styles = Styles(theme);
 
+    const openListButton = (
+        <Pressable style={styles.button} onPress={() => navigation.navigate(Screens.Drawer, { screen: Drawer.CreateOpenList })}>
+            <Plus />
+            <TextField>Abrir lista</TextField>
+        </Pressable>
+    );
+
     if (isLoading) return <SplashScreen />;
 
     return (
         <InnerScreenContainer>
-            {!loading && fetched && !list && (
-                <View style={styles.content}>
-                    <TextField>Nenhuma lista aberta</TextField>
-                    <Pressable style={styles.button} onPress={() => navigation.navigate(Screens.Drawer, { screen: Drawer.CreateOpenList })}>
-                        <Plus />
-                        <TextField>Abrir lista</TextField>
-                    </Pressable>
-                </View>
-            )}
+            {!loading && fetched && !list && <Empty text='Nenhuma lista aberta' margin={150} action={openListButton} />}
             {list && !hasReplied && <AnswerList />}
             {list && (
-                <View style={{ width: '100%', marginTop: !hasReplied ? 30 : 80, flex: 1 }}>
-                    <ListHeader
-                        title={list.title}
-                        date={list.date}
-                        startTime={list.startTime}
-                        endTime={list.endTime}
-                        location={list.location}
-                        minPlayers={list.minPlayers}
-                        maxPlayers={list.maxPlayers}
-                    />
-                    <ListTabs />
-                </View>
+                <OpenListProvider>
+                    <View style={{ width: '100%', marginTop: !hasReplied ? 30 : 80, flex: 1 }}>
+                        <ListHeader
+                            title={list.title}
+                            date={list.date}
+                            startTime={list.startTime}
+                            endTime={list.endTime}
+                            location={list.location}
+                            minPlayers={list.minPlayers}
+                            maxPlayers={list.maxPlayers}
+                        />
+                        <ListTabs />
+                    </View>
+                </OpenListProvider>
             )}
             {isLoading && <Loading />}
         </InnerScreenContainer>

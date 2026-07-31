@@ -69,6 +69,15 @@ export const openListSlice = createSlice({
             state.list = undefined;
             state.error = action.payload;
         },
+        updateList: (state) => { state.loading = true },
+        updateListSuccess: (state) => {
+            state.loading = false;
+            state.error = '';
+        },
+        updateListFailed: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.error = action.payload;
+        }
     },
 });
 
@@ -85,6 +94,9 @@ export const {
     createOpenList,
     createOpenListSuccess,
     createOpenListFailed,
+    updateList,
+    updateListSuccess,
+    updateListFailed,
 } = openListSlice.actions;
 
 export default openListSlice.reducer;

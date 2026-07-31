@@ -1,6 +1,8 @@
 import { View, StyleSheet } from 'react-native';
+import { useIsOwner } from '../../hooks/usePlayers';
 import TextField from '../Textfield';
 import Accordion from '../Accordion';
+import OwnerActions from './OwnerActions';
 import Volleyball from '../Icons/Volleyball';
 import Calendar from '../Icons/Calendar';
 import Clock from '../Icons/Clock';
@@ -27,6 +29,8 @@ const ListHeader = ({
     minPlayers,
     maxPlayers,
 }: Props) => {
+    const isOwner = useIsOwner();
+
     const fixedHeader = (
         <View style={Styles.info}>
             <Volleyball />
@@ -35,36 +39,43 @@ const ListHeader = ({
     );
 
     return (
-        <Accordion
-            initialHeight={32}
-            expandedHeight={164}
-            title={fixedHeader}
-            style={Styles.container}
-        >
-            <View style={{ marginTop: 24, gap: 12 }}>
-                <View style={Styles.info}>
-                    <Calendar />
-                    <TextField>{date}</TextField>
+        <View>
+            {isOwner && <OwnerActions />}
+            <Accordion
+                initialHeight={32}
+                expandedHeight={164}
+                title={fixedHeader}
+                style={Styles.acoordion}
+            >
+                <View style={{ marginTop: 24, gap: 12 }}>
+                    <View style={Styles.info}>
+                        <Calendar />
+                        <TextField>{date}</TextField>
+                    </View>
+                    <View style={Styles.info}>
+                        <Clock />
+                        <TextField>{startTime} às {endTime}</TextField>
+                    </View>
+                    <View style={Styles.info}>
+                        <LocationPin />
+                        <TextField>{location}</TextField>
+                    </View>
+                    <View style={Styles.info}>
+                        <Player />
+                        <TextField>{minPlayers.toString()} a {maxPlayers.toString()}</TextField>
+                    </View>
                 </View>
-                <View style={Styles.info}>
-                    <Clock />
-                    <TextField>{startTime} às {endTime}</TextField>
-                </View>
-                <View style={Styles.info}>
-                    <LocationPin />
-                    <TextField>{location}</TextField>
-                </View>
-                <View style={Styles.info}>
-                    <Player />
-                    <TextField>{minPlayers.toString()} a {maxPlayers.toString()}</TextField>
-                </View>
-            </View>
-        </Accordion>
+            </Accordion>
+        </View>
     );
 };
 
 const Styles = StyleSheet.create({
     container: {
+        width: '100%',
+        position: 'relative',
+    },
+    acoordion: {
         width: '100%',
         backgroundColor: '#FCF9D9',
         borderWidth: 2,

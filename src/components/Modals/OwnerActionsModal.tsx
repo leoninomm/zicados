@@ -1,32 +1,36 @@
-import { useContext } from 'react';
 import { View, Pressable, Modal, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { updateReply } from '../../store/openList/openListThunk';
-import { OpenListContext } from '../../contexts/OpenListContext';
+import { updateListInfo } from '../../store/openList/openListThunk';
 import TextField from '../Textfield';
 
 import type { AppDispatch } from '../../store/store';
 
 type Props = {
-    currentReply: boolean;
+    variant: 'CLOSE' | 'DELETE';
     isModalOpen: boolean;
     closeModal: () => void;
 };
 
-const ReplyStatusName = new Map<boolean, string>([
-    [true, 'Presente'],
-    [false, 'Ausente'],
-]);
-
-const SwitchReplyModal = ({ currentReply, isModalOpen, closeModal }: Props) => {
-    const dispatch = useDispatch<AppDispatch>();
-    const { setCurrentTab } = useContext(OpenListContext);
-
-    const handleSwitchReply = () => {
-        dispatch(updateReply(currentReply));
-        setCurrentTab(currentReply ? 1 : 0);
-        closeModal();
+const VARIANTS = {
+    'CLOSE': {
+        title: 'Fechar lista',
+        text: 'O vôlei rolou, alguém pagou, e ta na hora de cobrar a galera.',
+        buttonText: 'Fechar',
+    },
+    'DELETE': {
+        title: 'Deletar lista',
+        text: 'Essa lista vai ser DELETADA (não é a mesma coisa de fechar pra pagamento). Tem certeza?',
+        buttonText: 'Deletar',
     }
+}
+
+const OwnerActionModal = ({ variant, isModalOpen, closeModal }: Props) => {
+    const dispatch = useDispatch<AppDispatch>();
+
+    const handleOwnerAction = () => {
+        if (variant === 'DELETE') dispatch(updateListInfo({ isClosed: true }));
+        closeModal();
+    };
 
     return (
         <Modal
@@ -38,19 +42,15 @@ const SwitchReplyModal = ({ currentReply, isModalOpen, closeModal }: Props) => {
             <View style={Styles.overlay}>
                 <View style={Styles.container}>
                     <View style={{ marginBottom: 32 }}>
-                        <TextField bold size={18}>Alteração de status</TextField>
+                        <TextField bold size={18}>{VARIANTS[variant].title}</TextField>
                     </View>
-                    <TextField align='center'>Seu status na lista será alterado de
-                        <TextField italic bold> {ReplyStatusName.get(currentReply)} </TextField>
-                        para
-                        <TextField italic bold> {ReplyStatusName.get(!currentReply)} </TextField>
-                    </TextField>
+                    <TextField align='center'>{VARIANTS[variant].text}</TextField>
                     <View style={Styles.actions}>
                         <Pressable onPress={closeModal} style={[ Styles.button, Styles.cancel ]}>
                             <TextField color='#C62828'>Cancelar</TextField>
                         </Pressable>
-                        <Pressable onPress={handleSwitchReply} style={[ Styles.button, Styles.alter ]}>
-                            <TextField>Alterar</TextField>
+                        <Pressable onPress={handleOwnerAction} style={[ Styles.button, Styles.remove ]}>
+                            <TextField>{VARIANTS[variant].buttonText}</TextField>
                         </Pressable>
                     </View>
                 </View>
@@ -92,10 +92,10 @@ const Styles = StyleSheet.create({
         borderColor: '#C62828',
         backgroundColor: 'transparent',
     },
-    alter: {
+    remove: {
         borderColor: '#030626',
         backgroundColor: '#F2B705'
     }
 });
 
-export default SwitchReplyModal;
+export default OwnerActionModal;

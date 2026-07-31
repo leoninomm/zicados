@@ -7,6 +7,7 @@ import ListContainer from '../ListContainer';
 import ListRow from '../ListRow';
 import TextField from '../../Textfield';
 import RemoveGuestModal from '../../Modals/RemoveGuestModal';
+import Empty from '../../Empty';
 import Remove from '../../Icons/Remove';
 
 import type { RootState } from '../../../store/store';
@@ -24,8 +25,9 @@ const Guests = () => {
         setGuestToRemove(guest);
         openModal();
     };
+    
 
-    if (!guests.length) return null;
+    if (!guests.length) return <Empty text='Ninguém convidou ninguém ainda.' />;
 
     return (
         <ListContainer>
