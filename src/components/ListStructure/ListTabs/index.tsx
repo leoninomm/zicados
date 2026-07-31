@@ -46,7 +46,7 @@ const ListTabs = () => {
             <View style={{ flex: 1 }}>
                 {TABS[currentTab].component}
                 {(totalAbsent || totalAttending || totalReplies) &&(
-                    <View style={Styles.stats}>
+                    <View style={{...Styles.stats, flex: 1, marginBottom: 8 }}>
                         <View style={Styles.statItem}>
                             <Clipboard />
                             <TextField bold>{totalReplies}</TextField>

@@ -10,7 +10,6 @@ const ListContainer = ({ children }: Props) => {
             <ScrollView style={Styles.scroll}>
                 {children}
             </ScrollView>
-            {/* <SwitchReplyModal isModalOpen={isModalOpen} closeModal={closeModal} currentReply={false} /> */}
         </View>
     )
 };
@@ -22,6 +21,7 @@ const Styles = StyleSheet.create({
         borderWidth: 2,
         borderColor: '#2F1805',
         borderRadius: 32,
+        flex: 6,
     },
     scroll: {
         borderRadius: 32,
