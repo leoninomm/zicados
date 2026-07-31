@@ -82,10 +82,11 @@ export const getOpenListGuests = (id: string) => async (dispatch: AppDispatch) =
         const guestsRef = collection(db, FBCollections.OpenList, id, FBCollections.GuestsCol);
 
         onSnapshot(guestsRef, (snap: any) => {
-            if (!snap._exists) {
+            console.log(snap);
+            if (!snap._docs.length) {
                 dispatch(fetchGuestsSuccess([]));
             } else {
-                dispatch(fetchGuestsSuccess(snap._data.guests));
+                dispatch(fetchGuestsSuccess(snap._docs[0]._data.guests));
             }
         });
     } catch (error) {
@@ -158,19 +159,33 @@ export const addGuest = (guestName: string) => async (dispatch: AppDispatch, get
     const state = getState();
     const { user } = state.authReducer;
     const { list } = state.openListReducer;
+    const { guests } = state.openListReducer;
 
     if (user && list) {
         const db = getFirestore();
-    
+
         const guestsRef = doc(db, FBCollections.OpenList, list.id, FBCollections.GuestsCol, 'Guests');
-        const newGuest = {
+        const firstGuest = {
             guestName,
             playerResponsible: user.uid,
         };
+    
+        if (!guests.length) {
+            await setDoc(guestsRef, {
+                guests: [firstGuest]
+            });
 
-        await updateDoc(guestsRef, {
-            guests: arrayUnion(newGuest)
-        });
+        } else {
+            const newGuest = {
+                guestName,
+                playerResponsible: user.uid,
+            };
+    
+            await updateDoc(guestsRef, {
+                guests: arrayUnion(newGuest)
+            });
+        }
+        
     }
 };
 

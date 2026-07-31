@@ -27,7 +27,7 @@ const SignIn = () => {
     const handleLogin = () => {
         if (!email || !password) return;
 
-        dispatch(signIn(email, password));
+        dispatch(signIn(email.trim(), password));
     }
 
     const styles = Styles(theme);

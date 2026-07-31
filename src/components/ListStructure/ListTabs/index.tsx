@@ -44,7 +44,9 @@ const ListTabs = () => {
                 ))}
             </View>
             <View style={{ flex: 1 }}>
-                {TABS[currentTab].component}
+                <View style={{ flex: 6 }}>
+                    {TABS[currentTab].component}
+                </View>
                 {(totalAbsent || totalAttending || totalReplies) &&(
                     <View style={{...Styles.stats, flex: 1, marginBottom: 8 }}>
                         <View style={Styles.statItem}>
