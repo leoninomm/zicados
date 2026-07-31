@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import type { OpenList, OpenListPlayer } from '../../utils/types';
+import type { OpenList, OpenListPlayer, Guest } from '../../utils/types';
 
 export interface OpenListState {
     loading: boolean;
     list: OpenList | undefined;
     players: OpenListPlayer[];
+    guests: Guest[];
     fetched: boolean;
     error: string;
 };
@@ -14,6 +15,7 @@ const initialState: OpenListState ={
     loading: false,
     list: undefined,
     players: [],
+    guests: [],
     fetched: false,
     error: '',
 };
@@ -45,6 +47,17 @@ export const openListSlice = createSlice({
             state.players = [];
             state.error = action.payload;
         },
+        fetchGuests: (state) => { state.loading = true },
+        fetchGuestsSuccess: (state, action: PayloadAction<Guest[]>) => {
+            state.loading = false;
+            state.guests = action.payload;
+            state.error = '';
+        },
+        fetchGuestsFailed: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.guests = [];
+            state.error = action.payload;
+        },
         createOpenList: (state) => { state.loading = true },
         createOpenListSuccess: (state, action: PayloadAction<OpenList>) => {
             state.loading = false;
@@ -66,6 +79,9 @@ export const {
     fetchPlayers,
     fetchPlayersSuccess,
     fetchPlayersFailed,
+    fetchGuests,
+    fetchGuestsSuccess,
+    fetchGuestsFailed,
     createOpenList,
     createOpenListSuccess,
     createOpenListFailed,

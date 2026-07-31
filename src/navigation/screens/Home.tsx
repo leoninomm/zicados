@@ -1,31 +1,45 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { getOpenList } from '../../store/openList/openListThunk';
+import { getPlayers } from '../../store/players/playersThunk';
 import { useTheme } from '../../hooks/useTheme';
+import { useHasReplied } from '../../hooks/usePlayers';
 import InnerScreenContainer from '../../components/ScreenContainers/InnerScreenContainer';
 import TextField from '../../components/Textfield';
 import Plus from '../../components/Icons/Plus';
+import AnswerList from '../../components/ReplyToList';
 import ListHeader from '../../components/ListStructure/ListHeader';
 import ListTabs from '../../components/ListStructure/ListTabs';
+import SplashScreen from '../../components/SplashScreen';
 
 import type { AppDispatch, RootState } from '../../store/store';
 import { Theme } from '../../utils/theme';
 import { Screens, Drawer } from '../../utils/types';
+import Loading from '../../components/Loading';
 
 const Home = () => {
+    const [initializing, setInitializing] = useState(true);
     const { loading, list, fetched } = useSelector((state: RootState) => state.openListReducer);
+    const { players } = useSelector((state: RootState) => state.playersReducer);
     const dispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation();
     const theme = useTheme();
+    const hasReplied = useHasReplied();
+
+    const isLoading = loading || !fetched || !players.length || initializing;
 
     useEffect(() => {
         if (!fetched) dispatch(getOpenList());
-    }, [fetched]);
+        if (!players.length) dispatch(getPlayers());
+
+        setTimeout(() => setInitializing(false), 2000);
+    }, [fetched, players]);
 
     const styles = Styles(theme);
-    console.log(list);
+
+    if (isLoading) return <SplashScreen />;
 
     return (
         <InnerScreenContainer>
@@ -38,8 +52,9 @@ const Home = () => {
                     </Pressable>
                 </View>
             )}
+            {list && !hasReplied && <AnswerList />}
             {list && (
-                <View style={{ width: '100%', marginTop: 80 }}>
+                <View style={{ width: '100%', marginTop: !hasReplied ? 30 : 80, flex: 1 }}>
                     <ListHeader
                         title={list.title}
                         date={list.date}
@@ -52,6 +67,7 @@ const Home = () => {
                     <ListTabs />
                 </View>
             )}
+            {isLoading && <Loading />}
         </InnerScreenContainer>
     );
 };

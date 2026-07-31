@@ -38,8 +38,18 @@ export type Player = {
 export type OpenListPlayer = {
     uid: string;
     willAttend: boolean;
-    guests: string[];
 };
+
+export type Guest = {
+    guestName: string;
+    playerResponsible: string;
+};
+
+export type ListGuest = {
+    guestName: string;
+    playerResponsible: string;
+    guestTag: string;
+}
 
 export type OpenList = {
     id: string;
@@ -59,6 +69,8 @@ export enum FBCollections {
     OpenList = 'openList',
     PendingList = 'pendingList',
     ClosedList = 'closedList',
+    PlayersCol = 'PlayersCol',
+    GuestsCol = 'GuestsCol',
 };
 
 export enum FBConfig {

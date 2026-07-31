@@ -155,7 +155,6 @@ export const getUserDetails = () => async (dispatch: AppDispatch) => {
             const db = getFirestore();
             const user: any = await getDoc(doc(collection(db, 'users'), auth.currentUser.uid));
 
-            console.log(user);
             dispatch(setUserDetails(user._data.birthday));
         }
     } catch (error) {

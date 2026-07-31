@@ -7,7 +7,8 @@ type Props = {
     bold?: boolean;
     italic?: boolean;
     color?: string;
-    children: string | string[];
+    align?: 'auto' | 'center' | 'left' | 'right';
+    children: React.ReactNode;
 };
 
 const TextField = ({
@@ -15,6 +16,7 @@ const TextField = ({
     bold = false,
     italic = false,
     color = '',
+    align = 'auto',
     children,
 }: Props) => {
     const theme = useTheme();
@@ -22,6 +24,7 @@ const TextField = ({
         size,
         bold,
         italic,
+        align,
         color: color || theme.text,
     }
 
@@ -37,7 +40,9 @@ const Styles = (props: Omit<Props, 'children'>) => StyleSheet.create({
         fontFamily: 'Inter',
         fontSize: props.size,
         fontWeight: props.bold ? 700 : 400,
+        fontStyle: props.italic ? 'italic' : 'normal',
         color: props.color,
+        textAlign: props.align,
     }
 });
 
