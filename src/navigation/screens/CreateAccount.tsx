@@ -40,7 +40,7 @@ const CreateAccount = () => {
     return (
         <OuterScreenContainer loading={loading}>
             <View>
-                <TextField>Email:</TextField>
+                <TextField>Email</TextField>
                 <TextInput
                     value={email}
                     onChangeText={setEmail}
@@ -48,7 +48,7 @@ const CreateAccount = () => {
                 />
             </View>
             <View>
-                <TextField>Senha:</TextField>
+                <TextField>Senha</TextField>
                 <View style={styles.inputField}>
                     <TextInput
                         value={password}
@@ -62,7 +62,7 @@ const CreateAccount = () => {
                 </View>
             </View>
             <View>
-                <TextField>Repita a senha:</TextField>
+                <TextField>Repita a senha</TextField>
                 <View style={styles.inputField}>
                     <TextInput
                         value={repeatPassword}

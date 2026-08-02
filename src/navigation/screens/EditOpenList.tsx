@@ -82,9 +82,9 @@ const EditOpenList = () => {
         <InnerScreenContainer>
             <ScrollView>
                 <View style={styles.content}>
-                    <TextField>Atualização da lista <TextField bold italic>{title}</TextField>:</TextField>
+                    <TextField>Atualização da lista <TextField bold italic>{title}</TextField></TextField>
                     <View style={{ gap: 4, marginTop: 16 }}>
-                        <TextField>Título:</TextField>
+                        <TextField>Título</TextField>
                         <TextInput
                             value={title}
                             onChangeText={setTitle}
@@ -93,7 +93,7 @@ const EditOpenList = () => {
                     </View>
 
                     <View style={{ gap: 4}}>
-                        <TextField>Data:</TextField>
+                        <TextField>Data</TextField>
                         <Pressable style={styles.input} onPress={() => setOpenDatePicker(true)}>
                             <TextField>{date}</TextField>
                         </Pressable>
@@ -109,7 +109,7 @@ const EditOpenList = () => {
                     </View>
 
                     <View style={{ gap: 4 }}>
-                        <TextField>Horário:</TextField>
+                        <TextField>Horário</TextField>
                         <View style={styles.timeInputField}>
                             <Pressable style={{ ...styles.input, width: 100 }} onPress={() => setOpenStartTimePicker(true)}>
                                 <TextField>{startTime}</TextField>
@@ -140,7 +140,7 @@ const EditOpenList = () => {
                     </View>
 
                     <View style={{ gap: 4 }}>
-                        <TextField>Local:</TextField>
+                        <TextField>Local</TextField>
                         <TextInput
                             value={location}
                             onChangeText={setLocation}
@@ -149,7 +149,7 @@ const EditOpenList = () => {
                     </View>
 
                     <View style={{ gap: 4 }}>
-                        <TextField>Mínimo de jogadores:</TextField>
+                        <TextField>Mínimo de jogadores</TextField>
                         <TextInput
                             value={minPlayers.toString()}
                             onChangeText={(t: string) => setMinPlayers(Math.floor(Number(t)))}
@@ -159,7 +159,7 @@ const EditOpenList = () => {
                     </View>
 
                     <View style={{ gap: 4 }}>
-                        <TextField>Máximo de jogadores:</TextField>
+                        <TextField>Máximo de jogadores</TextField>
                         <TextInput
                             value={maxPlayers.toString()}
                             onChangeText={(t: string) => setMaxPlayers(Math.floor(Number(t)))}

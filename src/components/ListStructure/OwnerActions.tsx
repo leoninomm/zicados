@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { useModal } from '../../hooks/useModal';
+import { useStats } from '../../hooks/usePlayers';
 import OwnerActionModal from '../Modals/OwnerActionsModal';
 import Edit from '../Icons/Edit';
 import Close from '../Icons/Close';
 import Dollar from '../Icons/Dollar';
 
 import { Drawer, Screens } from '../../utils/types';
+import type { RootState } from '../../store/store';
 
 const OwnerActions = () => {
-    const [modalVariant, setModalVariant] = useState<'CLOSE' | 'DELETE'>('CLOSE');
+    const [modalVariant, setModalVariant] = useState<'CLOSE' | 'DELETE' | 'NOT_ENOUGH_PLAYERS'>('CLOSE');
+    const { list } = useSelector((state: RootState) => state.openListReducer);
+    const { totalAttending } = useStats();
     const { isModalOpen, openModal, closeModal } = useModal();
     const navigation = useNavigation();
 
@@ -20,7 +25,9 @@ const OwnerActions = () => {
     };
 
     const handleCloseModal = () => {
-        setModalVariant('CLOSE');
+        if (list && totalAttending < list?.minPlayers) {
+            setModalVariant('NOT_ENOUGH_PLAYERS');
+        } else setModalVariant('CLOSE');
         openModal();
     };
 

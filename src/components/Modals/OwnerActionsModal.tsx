@@ -6,23 +6,28 @@ import TextField from '../Textfield';
 import type { AppDispatch } from '../../store/store';
 
 type Props = {
-    variant: 'CLOSE' | 'DELETE';
+    variant: 'CLOSE' | 'DELETE' | 'NOT_ENOUGH_PLAYERS';
     isModalOpen: boolean;
     closeModal: () => void;
 };
 
 const VARIANTS = {
     'CLOSE': {
-        title: 'Fechar lista',
+        title: 'Pagar',
         text: 'O vôlei rolou, alguém pagou, e ta na hora de cobrar a galera.',
         buttonText: 'Fechar',
     },
     'DELETE': {
-        title: 'Deletar lista',
+        title: 'Fechar lista',
         text: 'Essa lista vai ser DELETADA (não é a mesma coisa de fechar pra pagamento). Tem certeza?',
         buttonText: 'Deletar',
+    },
+    'NOT_ENOUGH_PLAYERS': {
+        title: 'OPA',
+        text: 'A quantidade de jogadores é menor que a quantidade mínima. Para passar a lista pra pagamento, peça aos jogadores que confirmem quem compareceu.',
+        buttonText: 'Notificar',
     }
-}
+};
 
 const OwnerActionModal = ({ variant, isModalOpen, closeModal }: Props) => {
     const dispatch = useDispatch<AppDispatch>();

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet, useColorScheme } from 'react-native';
+import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { Provider } from 'react-redux';
@@ -24,6 +24,7 @@ function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider>
+        <StatusBar barStyle='dark-content' />
         <Authentication />
       </SafeAreaProvider>
     </Provider>

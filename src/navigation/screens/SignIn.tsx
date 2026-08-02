@@ -35,7 +35,7 @@ const SignIn = () => {
     return (
         <OuterScreenContainer loading={loading}>
             <View>
-                <TextField>Email:</TextField>
+                <TextField>Email</TextField>
                 <TextInput
                     value={email}
                     onChangeText={setEmail}
@@ -43,7 +43,7 @@ const SignIn = () => {
                 />
             </View>
             <View>
-                <TextField>Senha:</TextField>
+                <TextField>Senha</TextField>
                 <View style={styles.inputField}>
                     <TextInput
                         value={password}

@@ -50,7 +50,7 @@ const ProfileSettings = ({
     return (
         <View style={{ gap: 32 }}>
             <View style={{ gap: 4 }}>
-                <TextField>Nome do jogador:</TextField>
+                <TextField>Nome do jogador</TextField>
                 <TextInput
                     value={displayName}
                     onChangeText={onChangeName}
@@ -58,13 +58,13 @@ const ProfileSettings = ({
                 />
             </View>
             <View style={{ gap: 4 }}>
-                <TextField>Carinha do jogador:</TextField>
+                <TextField>Carinha do jogador</TextField>
                 <Pressable onPress={handleImagePicker} style={styles.addImageButton}>
                     {photoURL ? <Image src={photoURL} style={styles.imagePreview} /> : <AddPhoto />}
                 </Pressable>
             </View>
             <View style={{ gap: 4 }}>
-                <TextField>Aniversário do jogador:</TextField>
+                <TextField>Aniversário do jogador</TextField>
                 <Pressable onPress={() => setOpenDatePicker(true)} style={styles.input}>
                     <TextField>{birthday || 'Mistério'}</TextField>
                 </Pressable>
