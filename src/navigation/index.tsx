@@ -12,7 +12,8 @@ import UpdateProfile from './screens/UpdateProfile';
 import Players from './screens/Players';
 import CreateOpenList from './screens/CreateOpenList';
 import EditOpenList from './screens/EditOpenList';
-
+import SelectPayer from './screens/SelectPayer';
+import CreatePendingList from './screens/CreatePendingList';
 
 const Drawer = createDrawerNavigator({
     drawerContent: (props) => <DrawerContent {...props} />,
@@ -40,6 +41,14 @@ const Drawer = createDrawerNavigator({
         EditOpenList: {
             if: useIsSignedIn,
             screen: EditOpenList,
+        },
+        SelectPayer: {
+            if: useIsSignedIn,
+            screen: SelectPayer,
+        },
+        CreatePendingList: {
+            if: useIsSignedIn,
+            screen: CreatePendingList,
         }
     },
 });

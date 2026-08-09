@@ -1,9 +1,11 @@
 import { View, Pressable, Modal, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { updateListInfo } from '../../store/openList/openListThunk';
 import TextField from '../Textfield';
 
 import type { AppDispatch } from '../../store/store';
+import { Screens, Drawer } from '../../utils/types';
 
 type Props = {
     variant: 'CLOSE' | 'DELETE' | 'NOT_ENOUGH_PLAYERS';
@@ -31,9 +33,11 @@ const VARIANTS = {
 
 const OwnerActionModal = ({ variant, isModalOpen, closeModal }: Props) => {
     const dispatch = useDispatch<AppDispatch>();
+    const navigation = useNavigation();
 
     const handleOwnerAction = () => {
         if (variant === 'DELETE') dispatch(updateListInfo({ isClosed: true }));
+        else if (variant === 'CLOSE') navigation.navigate(Screens.Drawer, { screen: Drawer.SelectPayer });
         closeModal();
     };
 

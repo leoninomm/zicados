@@ -10,7 +10,9 @@ export enum Drawer {
     UpdateProfile = 'UpdateProfile',
     Players = 'Players',
     CreateOpenList = 'CreateOpenList',
-    EditOpenList = 'EditOpenList'
+    EditOpenList = 'EditOpenList',
+    SelectPayer = 'SelectPayer',
+    CreatePendingList = 'CreatePendingList',
 };
 
 export type ProfilePayload = {
