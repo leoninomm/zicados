@@ -3,6 +3,7 @@ import authReducer from './auth/authSlice';
 import preferencesReducer from './preferences/preferencesSlice';
 import playersReducer from './players/playersSlice';
 import openListReducer from './openList/openListSlice';
+import paymentListReducer from './paymentList/paymentListSlice';
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
         preferencesReducer,
         playersReducer,
         openListReducer,
+        paymentListReducer,
     },
 });
 

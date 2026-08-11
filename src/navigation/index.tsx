@@ -14,6 +14,7 @@ import CreateOpenList from './screens/CreateOpenList';
 import EditOpenList from './screens/EditOpenList';
 import SelectPayer from './screens/SelectPayer';
 import CreatePendingList from './screens/CreatePendingList';
+import PaymentList from './screens/PaymentList';
 
 const Drawer = createDrawerNavigator({
     drawerContent: (props) => <DrawerContent {...props} />,
@@ -49,7 +50,11 @@ const Drawer = createDrawerNavigator({
         CreatePendingList: {
             if: useIsSignedIn,
             screen: CreatePendingList,
-        }
+        },
+        PaymentList: {
+            if: useIsSignedIn,
+            screen: PaymentList,
+        },
     },
 });
 

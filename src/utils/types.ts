@@ -13,6 +13,7 @@ export enum Drawer {
     EditOpenList = 'EditOpenList',
     SelectPayer = 'SelectPayer',
     CreatePendingList = 'CreatePendingList',
+    PaymentList = 'PaymentList',
 };
 
 export type ProfilePayload = {
@@ -54,6 +55,18 @@ export type ListGuest = {
     guestTag: string;
 }
 
+export type PaymentListPlayer = {
+    uid: string;
+    timePlayed: number;
+    amountOwed: number;
+};
+
+export type PaymentListGuest = ListGuest | {
+    timePlayed: number;
+    amountOwed: number;
+};
+
+
 export type OpenList = {
     id: string;
     owner: string;
@@ -67,10 +80,16 @@ export type OpenList = {
     isClosed: boolean;
 };
 
+export type PaymentList = OpenList & {
+    payer: string;
+    price: number;
+    paymentInfo: string;
+}
+
 export enum FBCollections {
     Users = 'users',
     OpenList = 'openList',
-    PendingList = 'pendingList',
+    PaymentList = 'paymentList',
     ClosedList = 'closedList',
     PlayersCol = 'PlayersCol',
     GuestsCol = 'GuestsCol',

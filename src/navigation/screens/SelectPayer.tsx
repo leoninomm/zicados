@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react';
 import { View, Pressable, Image, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { openPaymentList } from '../../store/paymentList/paymentListThunk';
 import { useGetPlayers } from '../../hooks/usePlayers';
 import InnerScreenContainer from '../../components/ScreenContainers/InnerScreenContainer';
 import TextField from '../../components/Textfield';
 import ListContainer from '../../components/ListStructure/ListContainer';
 import Avatar from '../../components/Avatar';
+import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import Coin from '../../assets/coin.png';
 
-import type { RootState } from '../../store/store';
+import type { RootState, AppDispatch } from '../../store/store';
 import type { Player } from '../../utils/types';
 
 const SelectPayer = () => {
     const [payer, setPayer] = useState<Player>();
     const { user } = useSelector((state: RootState) => state.authReducer);
     const players = useGetPlayers(true);
+    const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         const didOwnerAttend = players.find((player) => player.uid === user?.uid);
@@ -54,6 +57,9 @@ const SelectPayer = () => {
                         </Pressable>
                     ))}
                 </ListContainer>
+                <View style={{ alignItems: 'center', marginTop: 16 }}>
+                    <Button variant='FILL' text='Confirmar' action={() => dispatch(openPaymentList(payer.uid))} />
+                </View>
             </View>
         </InnerScreenContainer>
     );

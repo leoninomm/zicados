@@ -40,6 +40,13 @@ const DrawerContent = (props: DrawerContentComponentProps) => {
                 <Pressable
                     style={Styles.button}
                     android_ripple={{ color: '#FAFBFB' }}
+                    onPress={() => navigation.navigate(Screens.Drawer, { screen: Drawer.PaymentList })}
+                >
+                    <TextField>Pagamentos</TextField>
+                </Pressable>
+                <Pressable
+                    style={Styles.button}
+                    android_ripple={{ color: '#FAFBFB' }}
                     onPress={() => navigation.navigate(Screens.Drawer, { screen: Drawer.UpdateProfile })}
                 >
                     <TextField>Perfil</TextField>

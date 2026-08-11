@@ -3,6 +3,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { getOpenList } from '../../store/openList/openListThunk';
+import { getPaymentList } from '../../store/paymentList/paymentListThunk';
 import { getPlayers } from '../../store/players/playersThunk';
 import { useTheme } from '../../hooks/useTheme';
 import { useHasReplied } from '../../hooks/usePlayers';
@@ -14,16 +15,22 @@ import AnswerList from '../../components/ReplyToList';
 import ListHeader from '../../components/ListStructure/ListHeader';
 import ListTabs from '../../components/ListStructure/ListTabs';
 import SplashScreen from '../../components/SplashScreen';
+import Empty from '../../components/Empty';
+import PaymentInProgress from '../../components/PaymentInProgress';
 
 import type { AppDispatch, RootState } from '../../store/store';
 import { Theme } from '../../utils/theme';
 import { Screens, Drawer } from '../../utils/types';
 import Loading from '../../components/Loading';
-import Empty from '../../components/Empty';
 
 const Home = () => {
     const [initializing, setInitializing] = useState(true);
     const { loading, list, fetched } = useSelector((state: RootState) => state.openListReducer);
+    const {
+        loading: paymentLoading,
+        paymentList,
+        fetched: paymentFetched
+    } = useSelector((state: RootState) => state.paymentListReducer);
     const { players } = useSelector((state: RootState) => state.playersReducer);
     const dispatch = useDispatch<AppDispatch>();
     const navigation = useNavigation();
@@ -34,12 +41,17 @@ const Home = () => {
 
     useEffect(() => {
         if (!fetched) dispatch(getOpenList());
+        if (!paymentFetched) dispatch(getPaymentList());
         if (!players.length) dispatch(getPlayers());
 
         setTimeout(() => setInitializing(false), 2000);
-    }, [fetched, players]);
+    }, [fetched, players, paymentFetched]);
+
+    const canOpenList = !loading && !paymentLoading && fetched && paymentFetched && !list && !paymentList;
+    const isInPaymentStep = !loading && !paymentLoading && fetched && paymentFetched && !list && paymentList;
 
     const styles = Styles(theme);
+
 
     const openListButton = (
         <Pressable style={styles.button} onPress={() => navigation.navigate(Screens.Drawer, { screen: Drawer.CreateOpenList })}>
@@ -52,7 +64,8 @@ const Home = () => {
 
     return (
         <InnerScreenContainer>
-            {!loading && fetched && !list && <Empty text='Nenhuma lista aberta' margin={150} action={openListButton} />}
+            {canOpenList && <Empty text='Nenhuma lista aberta' margin={150} action={openListButton} />}
+            {isInPaymentStep && <PaymentInProgress />}
             {list && !hasReplied && <AnswerList />}
             {list && (
                 <OpenListProvider>
