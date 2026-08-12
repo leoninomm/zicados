@@ -4,10 +4,10 @@ import { removeGuest } from '../../store/openList/openListThunk';
 import TextField from '../Textfield';
 
 import type { AppDispatch } from '../../store/store';
-import { ListGuest } from '../../utils/types';
+import { Guest } from '../../utils/types';
 
 type Props = {
-    guest?: ListGuest;
+    guest?: Guest;
     isModalOpen: boolean;
     closeModal: () => void;
 };
@@ -15,7 +15,7 @@ type Props = {
 const RemoveGuestModal = ({ guest, isModalOpen, closeModal }: Props) => {
     const dispatch = useDispatch<AppDispatch>();
 
-    const handleRemoveGuest = (guest: ListGuest) => {
+    const handleRemoveGuest = (guest: Guest) => {
         dispatch(removeGuest(guest))
         closeModal();
     }

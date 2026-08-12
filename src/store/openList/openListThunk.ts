@@ -7,10 +7,9 @@ import {
     updateDoc,
     doc,
     setDoc,
+    deleteDoc,
     query,
     where,
-    arrayRemove,
-    arrayUnion,
 } from '@react-native-firebase/firestore';
 import {
     fetchOpenList,
@@ -31,7 +30,7 @@ import {
 } from './openListSlice';
 
 import type { AppDispatch, RootState } from '../store';
-import { FBCollections, Guest, ListGuest, type OpenList } from '../../utils/types';
+import { FBCollections, Guest, type OpenList } from '../../utils/types';
 
 export const getOpenList = () => async (dispatch: AppDispatch) => {
     dispatch(fetchOpenList());
@@ -86,11 +85,11 @@ export const getOpenListGuests = (id: string) => async (dispatch: AppDispatch) =
             if (!snap._docs.length) {
                 dispatch(fetchGuestsSuccess([]));
             } else {
-                dispatch(fetchGuestsSuccess(snap._docs[0]._data.guests));
+                const guests = snap._docs.map((doc: any) => doc._data);
+                dispatch(fetchGuestsSuccess(guests));
             }
         });
     } catch (error) {
-        console.log(error);
         dispatch(fetchGuestsFailed((error as Error).message));
     };
 };
@@ -135,7 +134,6 @@ export const replyToList = (reply: boolean) => async (dispatch: AppDispatch, get
     setDoc(doc(playerCollectionRef, userId), {
         uid: userId,
         willAttend: reply,
-        guests: [],
     });
 };
 
@@ -151,7 +149,6 @@ export const updateReply = (currentReply: boolean) => async (dispatch: AppDispat
     updateDoc(doc(playerCollectionRef, userId), {
         uid: userId,
         willAttend: !currentReply,
-        guests: [],
     });
 };
 
@@ -159,52 +156,36 @@ export const addGuest = (guestName: string) => async (dispatch: AppDispatch, get
     const state = getState();
     const { user } = state.authReducer;
     const { list } = state.openListReducer;
-    const { guests } = state.openListReducer;
 
     if (user && list) {
         const db = getFirestore();
 
-        const guestsRef = doc(db, FBCollections.OpenList, list.id, FBCollections.GuestsCol, 'Guests');
-        const firstGuest = {
+        const guestsRef = collection(db, FBCollections.OpenList, list.id, FBCollections.GuestsCol);
+        const guest = {
             guestName,
+            guestTag: `${guestName} (${user.displayName})`,
             playerResponsible: user.uid,
         };
-    
-        if (!guests.length) {
-            await setDoc(guestsRef, {
-                guests: [firstGuest]
-            });
 
-        } else {
-            const newGuest = {
-                guestName,
-                playerResponsible: user.uid,
-            };
-    
-            await updateDoc(guestsRef, {
-                guests: arrayUnion(newGuest)
-            });
-        }
-        
+        const newGuest: any = await addDoc(guestsRef, guest);
+        const newGuestId = newGuest._documentPath._parts[3];
+
+        await updateDoc(doc(guestsRef, newGuestId), {
+            id: newGuestId,
+        });
     }
 };
 
-export const removeGuest = (guest: ListGuest) => async (dispatch: AppDispatch, getState: () => RootState) => {
+export const removeGuest = (guest: Guest) => async (dispatch: AppDispatch, getState: () => RootState) => {
     const state = getState();
     const { list } = state.openListReducer;
 
     if (list) {
         const db = getFirestore();
     
-        const guestsRef = doc(db, FBCollections.OpenList, list.id, FBCollections.GuestsCol, 'Guests');
-        const guestToRemove = {
-            guestName: guest.guestName,
-            playerResponsible: guest.playerResponsible,
-        };
+        const guestRef = doc(db, FBCollections.OpenList, list.id, FBCollections.GuestsCol, guest.id);
     
-        await updateDoc(guestsRef, {
-            guests: arrayRemove(guestToRemove)
-        });
+        await deleteDoc(guestRef);
     }
 };
 

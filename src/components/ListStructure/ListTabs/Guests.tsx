@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useGetGuests } from '../../../hooks/usePlayers';
 import { useModal } from '../../../hooks/useModal';
 import ListContainer from '../ListContainer';
 import ListRow from '../ListRow';
@@ -11,17 +10,17 @@ import Empty from '../../Empty';
 import Remove from '../../Icons/Remove';
 
 import type { RootState } from '../../../store/store';
-import { ListGuest } from '../../../utils/types';
+import { Guest } from '../../../utils/types';
 
 const Guests = () => {
-    const [guestToRemove, setGuestToRemove] = useState<ListGuest>();
+    const [guestToRemove, setGuestToRemove] = useState<Guest>();
     const { user } = useSelector((state: RootState) => state.authReducer);
-    const guests = useGetGuests();
+    const { guests } = useSelector((state: RootState) => state.openListReducer);
     const { isModalOpen, openModal, closeModal } = useModal();
 
     const isUsersGuest = (id: string) => id === user?.uid;
 
-    const handleRemoveGuest = (guest: ListGuest) => {
+    const handleRemoveGuest = (guest: Guest) => {
         setGuestToRemove(guest);
         openModal();
     };

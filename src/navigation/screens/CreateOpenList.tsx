@@ -6,7 +6,7 @@ import remoteConfig from '@react-native-firebase/remote-config';
 import DatePicker from 'react-native-date-picker';
 import { openList } from '../../store/openList/openListThunk';
 import { useTheme } from '../../hooks/useTheme';
-import { getNextSunday } from '../../utils/halpers';
+import { getNextSunday } from '../../utils/helpers';
 import InnerScreenContainer from '../../components/ScreenContainers/InnerScreenContainer';
 import TextField from '../../components/Textfield';
 import Loading from '../../components/Loading';

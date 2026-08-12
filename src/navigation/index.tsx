@@ -1,5 +1,4 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createDrawerNavigator, createDrawerScreen } from '@react-navigation/drawer';
 import { createStaticNavigation, StaticParamList } from '@react-navigation/native';
 import { useIsSignedIn, useIsSignedOut, useIsProfileSet } from '../hooks/useAuth';
@@ -13,7 +12,7 @@ import Players from './screens/Players';
 import CreateOpenList from './screens/CreateOpenList';
 import EditOpenList from './screens/EditOpenList';
 import SelectPayer from './screens/SelectPayer';
-import CreatePendingList from './screens/CreatePendingList';
+import CreatePaymentList from './screens/CreatePaymentList';
 import PaymentList from './screens/PaymentList';
 
 const Drawer = createDrawerNavigator({
@@ -47,9 +46,9 @@ const Drawer = createDrawerNavigator({
             if: useIsSignedIn,
             screen: SelectPayer,
         },
-        CreatePendingList: {
+        CreatePaymentList: {
             if: useIsSignedIn,
-            screen: CreatePendingList,
+            screen: CreatePaymentList,
         },
         PaymentList: {
             if: useIsSignedIn,

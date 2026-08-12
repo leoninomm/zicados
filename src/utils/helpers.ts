@@ -35,3 +35,17 @@ export const getNextSunday = () => {
 
     return new Date(nextSundayYear, nextSundayMonth, nextSundayDate);
 };
+
+export const formatCurrency = (value: string) => {
+    let num = value.split(' ')[1].replace(',', '');
+    num = Number(num).toString();
+
+    if (!num.length) return `R$ 0,00`;
+    if (num.length < 2) return `R$ 0,0${num}`;
+    if (num.length < 3) return `R$ 0,${num}`;
+    
+    const integer = num.slice(0, num.length - 2);
+    const decimal = num.slice(num.length - 2);
+
+    return `R$ ${integer},${decimal}`;
+};

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Pressable, Image, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { openPaymentList } from '../../store/paymentList/paymentListThunk';
 import { useGetPlayers } from '../../hooks/usePlayers';
 import InnerScreenContainer from '../../components/ScreenContainers/InnerScreenContainer';
@@ -12,19 +13,28 @@ import Loading from '../../components/Loading';
 import Coin from '../../assets/coin.png';
 
 import type { RootState, AppDispatch } from '../../store/store';
-import type { Player } from '../../utils/types';
+import { Drawer, Screens, type Player } from '../../utils/types';
 
 const SelectPayer = () => {
     const [payer, setPayer] = useState<Player>();
     const { user } = useSelector((state: RootState) => state.authReducer);
     const players = useGetPlayers(true);
     const dispatch = useDispatch<AppDispatch>();
+    const navigation = useNavigation();
 
     useEffect(() => {
         const didOwnerAttend = players.find((player) => player.uid === user?.uid);
         if (didOwnerAttend) setPayer(didOwnerAttend);
         else setPayer(players[0]);
     }, []);
+
+    const handleConfirm = () => {
+        if (payer) {
+            dispatch(openPaymentList(payer.uid));
+            if (payer.uid === user?.uid) navigation.navigate(Screens.Drawer, { screen: Drawer.CreatePaymentList });
+            else navigation.navigate(Screens.Drawer, { screen: Drawer.PaymentList })
+        }
+    }
     
     if (!user || !user.photoURL) return null;
     if (!payer) return <Loading />;
@@ -58,7 +68,7 @@ const SelectPayer = () => {
                     ))}
                 </ListContainer>
                 <View style={{ alignItems: 'center', marginTop: 16 }}>
-                    <Button variant='FILL' text='Confirmar' action={() => dispatch(openPaymentList(payer.uid))} />
+                    <Button variant='FILL' text='Confirmar' action={handleConfirm} />
                 </View>
             </View>
         </InnerScreenContainer>

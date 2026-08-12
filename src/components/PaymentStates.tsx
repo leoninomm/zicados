@@ -1,8 +1,11 @@
 import { View, Image, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import TextField from './Textfield';
 import Button from './Button';
 import CoinCheck from '../assets/coin-check-mark.png';
 import CoinClock from '../assets/coin-clock.png';
+
+import { Screens, Drawer } from '../utils/types';
 
 type Props = {
     variant: 'EMPTY' | 'WAITING';
@@ -10,6 +13,8 @@ type Props = {
 }
 
 const PaymentStates = ({ variant, hasAction = false }: Props) => {
+    const navigation = useNavigation();
+
     const imageSrc = variant === 'EMPTY' ? CoinCheck : CoinClock;
     const getText = () => {
         if (variant === 'EMPTY') return 'Todas as contas acertadas.';
@@ -22,7 +27,12 @@ const PaymentStates = ({ variant, hasAction = false }: Props) => {
             <Image source={imageSrc} style={Styles.image} />
             <TextField align='center'>{getText()}</TextField>
             {hasAction && (
-                <Button text='Configurar lista de pagamentos' variant='FILL' action={() => {}} style={Styles.button} />
+                <Button
+                    text='Configurar lista de pagamentos'
+                    variant='FILL'
+                    action={() => navigation.navigate(Screens.Drawer, { screen: Drawer.CreatePaymentList})}
+                    style={Styles.button}
+                />
             )}
         </View>
     );

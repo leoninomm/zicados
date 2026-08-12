@@ -12,7 +12,7 @@ export enum Drawer {
     CreateOpenList = 'CreateOpenList',
     EditOpenList = 'EditOpenList',
     SelectPayer = 'SelectPayer',
-    CreatePendingList = 'CreatePendingList',
+    CreatePaymentList = 'CreatePaymentList',
     PaymentList = 'PaymentList',
 };
 
@@ -45,7 +45,9 @@ export type OpenListPlayer = {
 };
 
 export type Guest = {
+    id: string;
     guestName: string;
+    guestTag: string;
     playerResponsible: string;
 };
 
@@ -101,4 +103,6 @@ export enum FBConfig {
     Location = 'location',
     MinPlayers = 'minPlayers',
     MaxPlayers = 'maxPlayers',
+    Price = 'price',
+    PlayTime = 'playTime',
 };
