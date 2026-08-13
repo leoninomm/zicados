@@ -65,3 +65,35 @@ export const useIsOwner = () => {
 
     return user?.uid === list?.owner;
 }
+
+export const useGetPaymentPlayers = (didPay: boolean) => {
+    const { players } = useSelector((state: RootState) => state.paymentListReducer);
+    const { players: playersInfo } = useSelector((state: RootState) => state.playersReducer);
+
+    const filteredPlayers = players.filter((player) => player.payed === didPay);
+    const listPlayers = filteredPlayers.map((player) => {
+        const playerInfo = playersInfo.find((pi) => pi.uid === player.uid);
+        if (!playerInfo) return {
+            ...player,
+            displayName: '',
+            photoURL: '',
+        };
+        return { ...player, ...playerInfo};
+    })
+
+    return listPlayers;
+};
+
+export const useGetPaymentGuests = (didPay: boolean) => {
+    const { guests } = useSelector((state: RootState) => state.paymentListReducer);
+
+    const filteredGuests = guests.filter((guest) => guest.payed === didPay);
+    return filteredGuests;
+};
+
+export const useIsPayer = () => {
+    const { user } = useSelector((state: RootState) => state.authReducer);
+    const { paymentList } = useSelector((state: RootState) => state.paymentListReducer);
+
+    return user?.uid === paymentList?.payer;
+};

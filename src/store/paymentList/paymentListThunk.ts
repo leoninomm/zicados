@@ -18,6 +18,12 @@ import {
     setPaymentListPlayersStart,
     setPaymentListPlayersSuccess,
     setPaymentListPlayersFailed,
+    fetchPlayers,
+    fetchPlayersSuccess,
+    fetchPlayersFailed,
+    fetchGuests,
+    fetchGuestsSuccess,
+    fetchGuestsFailed,
 } from './paymentListSlice';
 
 import type { AppDispatch, RootState } from '../store';
@@ -102,9 +108,60 @@ export const setPaymentListPlayers = (
 
             dispatch(setPaymentListPlayersSuccess({ players, guests }));
         } else {
-            throw new Error('Payment list not found');
+            throw new Error('No payment list found');
         }
     } catch (error) {
         dispatch(setPaymentListPlayersFailed((error as Error).message));
     }
 };
+
+export const getPaymentListPlayers = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch(fetchPlayers());
+    const state = getState();
+
+    try {
+        const db = getFirestore();
+        const { paymentList } = state.paymentListReducer;
+        if (paymentList) {
+            const playersRef = collection(db, FBCollections.PaymentList, paymentList.id, FBCollections.PlayersCol);
+        
+            onSnapshot(playersRef, (snap: any) => {
+                console.log(snap);
+                if (!snap._docs.length) dispatch(fetchPlayersSuccess([]))
+                else {
+                    const players = snap._docs.map((doc: any) => doc._data);
+                    dispatch(fetchPlayersSuccess(players));
+                };
+            });
+        } else {
+            throw new Error('No paymentlist found');
+        }
+    } catch (error) {
+        dispatch(fetchPlayersFailed((error as Error).message));
+    };
+};
+
+export const getPaymentListGuests = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch(fetchGuests());
+    const state = getState();
+
+    try {
+        const db = getFirestore();
+        const { paymentList } = state.paymentListReducer;
+        if (paymentList) {
+            const guestsRef = collection(db, FBCollections.PaymentList, paymentList.id, FBCollections.GuestsCol);
+
+            onSnapshot(guestsRef, (snap: any) => {
+                if (!snap._docs.length) dispatch(fetchGuestsSuccess([]))
+                else {
+                    const guests = snap._docs.map((doc: any) => doc._data);
+                    dispatch(fetchGuestsSuccess(guests));
+                };
+            });
+        } else {
+            throw new Error('No paymentlist found');
+        }
+    } catch (error) {
+        dispatch(fetchPlayersFailed((error as Error).message));
+    };
+}

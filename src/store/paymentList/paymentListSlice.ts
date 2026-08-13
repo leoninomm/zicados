@@ -6,6 +6,7 @@ export interface PaymentListState {
     players: PaymentListPlayer[],
     guests: PaymentListGuest[],
     fetched: boolean,
+    guestsFetched: boolean,
     loading: boolean,
     error: string,
 };
@@ -15,6 +16,7 @@ const initialState: PaymentListState = {
     players: [],
     guests: [],
     fetched: false,
+    guestsFetched: false,
     loading: false,
     error: '',
 };
@@ -58,7 +60,32 @@ export const paymentListSlice = createSlice({
             state.players = [];
             state.guests = [];
             state.error = action.payload;
-        }
+        },
+        fetchPlayers: (state) => { state.loading = true },
+        fetchPlayersSuccess: (state, action: PayloadAction<PaymentListPlayer[]>) => {
+            console.log(action.payload);
+            state.loading = false;
+            state.players = action.payload;
+            state.error = '';
+        },
+        fetchPlayersFailed: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.players = [];
+            state.error = action.payload;
+        },
+        fetchGuests: (state) => { state.loading = true },
+        fetchGuestsSuccess: (state, action: PayloadAction<PaymentListGuest[]>) => {
+            console.log(action.payload);
+            state.loading = false;
+            state.guests = action.payload;
+            state.guestsFetched = true;
+            state.error = '';
+        },
+        fetchGuestsFailed: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.guests = [];
+            state.error = action.payload;
+        },
     },
 });
 
@@ -72,6 +99,12 @@ export const {
     setPaymentListPlayersStart,
     setPaymentListPlayersSuccess,
     setPaymentListPlayersFailed,
+    fetchPlayers,
+    fetchPlayersSuccess,
+    fetchPlayersFailed,
+    fetchGuests,
+    fetchGuestsSuccess,
+    fetchGuestsFailed,
 } = paymentListSlice.actions;
 
 export default paymentListSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { createContext, JSX, useState, useEffect } from 'react';
+import React, { createContext, JSX, useState } from 'react';
 
 type OpenListContextType = {
     currentTab: number;
