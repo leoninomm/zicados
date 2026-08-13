@@ -1,6 +1,4 @@
-import { getAuth } from '@react-native-firebase/auth';
 import {
-    addDoc,
     collection,
     getFirestore,
     onSnapshot,
@@ -9,8 +7,6 @@ import {
     setDoc,
     query,
     where,
-    arrayRemove,
-    arrayUnion,
 } from '@react-native-firebase/firestore';
 import {
     fetchPaymentList,
@@ -19,10 +15,13 @@ import {
     createPaymentList,
     createPaymentListSuccess,
     createPaymentListFailed,
+    setPaymentListPlayersStart,
+    setPaymentListPlayersSuccess,
+    setPaymentListPlayersFailed,
 } from './paymentListSlice';
 
 import type { AppDispatch, RootState } from '../store';
-import { FBCollections, PaymentList } from '../../utils/types';
+import { FBCollections, PaymentList, PaymentListGuest, PaymentListPlayer } from '../../utils/types';
 
 export const getPaymentList = () => async (dispatch: AppDispatch) => {
     dispatch(fetchPaymentList());
@@ -67,4 +66,45 @@ export const openPaymentList = (payer: string) => async (dispatch: AppDispatch, 
     } catch (error) {
         dispatch(createPaymentListFailed((error as Error).message));
     }
-}
+};
+
+export const setPaymentListPlayers = (
+    players: PaymentListPlayer[],
+    guests: PaymentListGuest[],
+    paymentInfo: string,
+    price: string,
+) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    dispatch(setPaymentListPlayersStart());
+    const state = getState();
+
+    try {
+        const { paymentList } = state.paymentListReducer;
+    
+        if (paymentList) {
+            const db = getFirestore();
+        
+            const paymentListRef = collection(db, FBCollections.PaymentList);
+            const paymentListPlayersRef = collection(db, FBCollections.PaymentList, paymentList.id, FBCollections.PlayersCol);
+            const paymentListGuestsRef = collection(db, FBCollections.PaymentList, paymentList.id, FBCollections.GuestsCol);
+    
+            players.map((player) => {
+                setDoc(doc(paymentListPlayersRef, player.uid), player);
+            });
+    
+            guests.map((guest) => {
+                setDoc(doc(paymentListGuestsRef, guest.id), guest);
+            });
+
+            await updateDoc(doc(paymentListRef, paymentList.id), {
+                paymentInfo,
+                price,
+            });
+
+            dispatch(setPaymentListPlayersSuccess({ players, guests }));
+        } else {
+            throw new Error('Payment list not found');
+        }
+    } catch (error) {
+        dispatch(setPaymentListPlayersFailed((error as Error).message));
+    }
+};

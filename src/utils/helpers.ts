@@ -1,3 +1,5 @@
+import { GuestsData, PlayersData } from "../navigation/screens/CreatePaymentList";
+
 export const strToDate = (str: string) => {
     const strSplit = str.split('/');
 
@@ -48,4 +50,73 @@ export const formatCurrency = (value: string) => {
     const decimal = num.slice(num.length - 2);
 
     return `R$ ${integer},${decimal}`;
+};
+
+export const addTime = (time: string, max: string) => {
+    let value = Number(time.split(':')[0]);
+    let maxValue = Number(max.split(':')[0]);
+    if (value === maxValue) return time;
+
+    value ++;
+
+    return `${value}:00`;
+};
+
+export const subtractTime = (time: string) => {
+    let value = Number(time.split(':')[0]);
+    if (!value) return time;
+
+    value --;
+
+    return `${value}:00`;
+};
+
+export const calculatePricePerSlot = (players: PlayersData, guests: GuestsData, price: string) => {
+    let timeSlots: number[] = [];
+    Object.values(players).map((player) => {
+        const slot = Number(player.timePlayed.split(':')[0]);
+        timeSlots.push(slot);
+    });
+    Object.values(guests).map((guest) => {
+        const slot = Number(guest.timePlayed.split(':')[0]);
+        timeSlots.push(slot);
+    });
+
+    const totalSlots = timeSlots.reduce((acc, slot) => { return acc + slot }, 0);
+
+    const totalPrice = Number(price.split(' ')[1].replace(',', '.'));
+
+    return totalPrice / totalSlots;
+};
+
+export const getPricePerPlayer = (players: PlayersData, slotPrice: number) => {
+    let pricedPlayers: PlayersData = {};
+
+    Object.values(players).map((player) => {
+        const timeSlots = Number(player.timePlayed.split(':')[0]);
+        const playerPrice = slotPrice * timeSlots;
+
+        pricedPlayers[player.uid] = {
+            ...player,
+            amountOwed: playerPrice,
+        };
+    });
+
+    return pricedPlayers;
+};
+
+export const getPricePerGuest = (guests: GuestsData, slotPrice: number) => {
+    let pricedGuests: GuestsData = {};
+
+    Object.values(guests).map((guest) => {
+        const timeSlots = Number(guest.timePlayed.split(':')[0]);
+        const guestPrice = slotPrice * timeSlots;
+
+        pricedGuests[guest.id] = {
+            ...guest,
+            amountOwed: guestPrice,
+        };
+    });
+
+    return pricedGuests;
 };

@@ -59,13 +59,15 @@ export type ListGuest = {
 
 export type PaymentListPlayer = {
     uid: string;
-    timePlayed: number;
+    timePlayed: string;
     amountOwed: number;
+    payed: boolean;
 };
 
-export type PaymentListGuest = ListGuest | {
-    timePlayed: number;
+export type PaymentListGuest = Guest & {
+    timePlayed: string;
     amountOwed: number;
+    payed: boolean;
 };
 
 

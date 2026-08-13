@@ -45,6 +45,19 @@ export const paymentListSlice = createSlice({
             state.loading = false;
             state.paymentList = undefined;
             state.error = action.payload;
+        },
+        setPaymentListPlayersStart: (state) => { state.loading = true },
+        setPaymentListPlayersSuccess: (state, action: PayloadAction<{players: PaymentListPlayer[], guests: PaymentListGuest[]}>) => {
+            state.loading = false;
+            state.players = action.payload.players;
+            state.guests = action.payload.guests;
+            state.error = '';
+        },
+        setPaymentListPlayersFailed: (state, action: PayloadAction<string>) => {
+            state.loading = false;
+            state.players = [];
+            state.guests = [];
+            state.error = action.payload;
         }
     },
 });
@@ -56,6 +69,9 @@ export const {
     createPaymentList,
     createPaymentListSuccess,
     createPaymentListFailed,
+    setPaymentListPlayersStart,
+    setPaymentListPlayersSuccess,
+    setPaymentListPlayersFailed,
 } = paymentListSlice.actions;
 
 export default paymentListSlice.reducer;

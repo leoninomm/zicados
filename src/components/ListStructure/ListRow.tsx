@@ -29,7 +29,7 @@ const Styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingVertical: 12,
         paddingHorizontal: 20,
-
+        minHeight: 65,
     },
     evenRow: {
         backgroundColor: '#FCF9D9',

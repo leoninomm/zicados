@@ -15,7 +15,11 @@ const PaymentList = () => {
     const getPaymentState = () => {
         if (!paymentList) return <PaymentStates variant='EMPTY' />;
         if (!paymentList.paymentInfo) return <PaymentStates variant='WAITING' hasAction={isUserPayer} />;
-        else return null;
+        else return (
+            <View style={{ marginTop: 80 }}>
+                <TextField>WIP Lista de pagamento</TextField>
+            </View>
+        );
     }
 
     return (

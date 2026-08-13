@@ -1,56 +1,153 @@
 import { useEffect, useState } from 'react';
-import { View, Pressable, TextInput, StyleSheet, ScrollView } from 'react-native';
+import { View, Pressable, TextInput, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { getOpenListGuests, getOpenListPlayers } from '../../store/openList/openListThunk';
-import { useGetPlayers, useGetGuests } from '../../hooks/usePlayers';
-import { formatCurrency } from '../../utils/helpers';
+import { setPaymentListPlayers } from '../../store/paymentList/paymentListThunk';
+import { useGetPlayers } from '../../hooks/usePlayers';
+import { addTime, calculatePricePerSlot, formatCurrency, getPricePerGuest, getPricePerPlayer, subtractTime } from '../../utils/helpers';
 import InnerScreenContainer from '../../components/ScreenContainers/InnerScreenContainer';
 import TextField from '../../components/Textfield';
+import Button from '../../components/Button';
 import ListContainer from '../../components/ListStructure/ListContainer';
 import ListRow from '../../components/ListStructure/ListRow';
 import Avatar from '../../components/Avatar';
 import Loading from '../../components/Loading';
+import Clock from '../../components/Icons/Clock';
 
 import type { RootState, AppDispatch } from '../../store/store';
-import { FBConfig } from '../../utils/types';
+import { Drawer, FBConfig, PaymentListGuest, PaymentListPlayer, Screens } from '../../utils/types';
+
+export type PlayersData = Record<string, PaymentListPlayer>;
+export type GuestsData = Record<string, PaymentListGuest>;
 
 const CreatePaymentList = () => {
     const [initializing, setInitializing] = useState(true);
+    const [playersReady, setPlayersReady] = useState(false);
+    const [guestsReady, setGuestsReady] = useState(false);
     const [price, setPrice] = useState('');
+    const [playTime, setPlayTime] = useState('');
     const [paymentInfo, setPaymentInfo] = useState('');
+    const [playersData, setPlayersData] = useState<PlayersData>({});
+    const [guestsData, setGuestsData] = useState<GuestsData>({});
     const [status, setStatus] = useState<'TIME' | 'PRICE'>('TIME');
     const { paymentList } = useSelector((state: RootState) => state.paymentListReducer);
+    const { user } = useSelector((state: RootState) => state.authReducer);
 
     const dispatch = useDispatch<AppDispatch>();
+    const navigation = useNavigation();
     const players = useGetPlayers(true);
     const { guests } = useSelector((state: RootState) => state.openListReducer);
     const totalAttending = players.length + guests.length;
 
-    console.log(players, guests);
-
     useEffect(() => {
         const dfPrice = remoteConfig().getValue(FBConfig.Price).asString();
         const dfPlayTime = remoteConfig().getValue(FBConfig.PlayTime).asString();
-        console.log(dfPrice, dfPlayTime);
-
-        setPrice(formatCurrency('R$ 220,00'));
-        setInitializing(false);
-    }, []);
-
-    useEffect(() => {
+        
+        setPrice(dfPrice);
+        setPlayTime(dfPlayTime);
+        
         if (!players.length && paymentList) {
             dispatch(getOpenListPlayers(paymentList.id));
             dispatch(getOpenListGuests(paymentList.id));
         }
+
+        setInitializing(false);
     }, []);
+    
+    useEffect(() => {
+        if (players.length && !playersReady) {
+            let dfPlayersData: PlayersData = {};
+            players.map((player) => {
+                dfPlayersData[player.uid] = {
+                    uid: player.uid,
+                    timePlayed: playTime,
+                    amountOwed: 0,
+                    payed: player.uid === user?.uid,
+                };
+            });
+            setPlayersData(dfPlayersData);
+            setPlayersReady(true);
+        }
+    }, [players]);
+
+    useEffect(() => {
+        if (guests.length && !guestsReady) {
+            let dfGuestsData: GuestsData = {};
+            guests.map((guest) => {
+                dfGuestsData[guest.id] = {
+                    ...guest,
+                    timePlayed: playTime,
+                    amountOwed: 0,
+                    payed: false,
+                };
+            });
+            setGuestsData(dfGuestsData);
+            setGuestsReady(true);
+        }
+    }, [guests]);
 
     const handlePrice = (price: string) => {
         const newPrice = formatCurrency(price);
         setPrice(newPrice);
-    }
+    };
 
-    if (initializing) return <Loading />
+    const handleChangePlayerTime = (id: string, type: 'SUB' | 'ADD') => {
+        const player = playersData[id];
+
+        let newTimePlayed= player.timePlayed;
+        if (type === 'SUB') newTimePlayed = subtractTime(player.timePlayed);
+        else if (type === 'ADD') newTimePlayed = addTime(player.timePlayed, playTime);
+
+        const newPlayersData = {
+            ...playersData,
+            [id]: {
+                ...player,
+                timePlayed: newTimePlayed,
+            },
+        };
+        setPlayersData(newPlayersData);
+    };
+
+    const handleChangeGuestTime = (id: string, type: 'SUB' | 'ADD') => {
+        const guest = guestsData[id];
+        
+        let newTimePlayed= guest.timePlayed;
+        if (type === 'SUB') newTimePlayed = subtractTime(guest.timePlayed);
+        else if (type === 'ADD') newTimePlayed = addTime(guest.timePlayed, playTime);
+
+        const newGuestsData = {
+            ...guestsData,
+            [id]: {
+                ...guest,
+                timePlayed: newTimePlayed,
+            },
+        };
+        setGuestsData(newGuestsData);
+    };
+
+    const handleCalculate = () => {
+        const pricePerSlot = calculatePricePerSlot(playersData, guestsData, price);
+        const pricedPlayers = getPricePerPlayer(playersData, pricePerSlot);
+        const pricedGuests = getPricePerGuest(guestsData, pricePerSlot);
+
+        setPlayersData(pricedPlayers);
+        setGuestsData(pricedGuests);
+        setStatus('PRICE');
+    };
+
+    const handleConfirm = () => {
+        dispatch(setPaymentListPlayers(Object.values(playersData), Object.values(guestsData), paymentInfo, price));
+        // navigation.navigate(Screens.Drawer, { screen: Drawer.PaymentList });
+    };
+
+    const handleAction = () => {
+        if (status === 'TIME') handleCalculate();
+        else if (status === 'PRICE') handleConfirm();
+    };
+
+    if (initializing || !playersReady || !guestsReady) return <Loading />
 
     return (
         <InnerScreenContainer>
@@ -72,7 +169,7 @@ const CreatePaymentList = () => {
                         style={Styles.input}
                     />
                 </View>
-                <TextField>Tempo de jogo</TextField>
+                <TextField>{status === 'TIME' ? 'Tempo de jogo' : 'Preço por jogador'}</TextField>
                 <View style={{ flex: 1, width: '100%', marginTop: -16 }}>
                     <ListContainer>
                         {players.map((player, i) => (
@@ -81,14 +178,51 @@ const CreatePaymentList = () => {
                                     <Avatar photo={player.photoURL} size={44} />
                                     <TextField>{player.displayName}</TextField>
                                 </View>
+                                {status === 'TIME' ? (
+                                    <View style={Styles.player}>
+                                        <Pressable onPress={() => handleChangePlayerTime(player.uid, 'SUB')}>
+                                            <TextField bold size={22}>-</TextField>
+                                        </Pressable>
+                                        <Clock />
+                                        <TextField>{playersData[player.uid].timePlayed}</TextField>
+                                        <Pressable onPress={() => handleChangePlayerTime(player.uid, 'ADD')}>
+                                            <TextField bold size={20}>+</TextField>
+                                        </Pressable>
+                                    </View>
+                                ) : (
+                                    <TextField>R$ {playersData[player.uid].amountOwed.toFixed(2).replace('.', ',')}</TextField>
+                                )}
                             </ListRow>
                         ))}
                         {guests.map((guest, i) => (
                             <ListRow index={i + 1} isLast={i + players.length === totalAttending} key={guest.guestName}>
                                 <TextField>{guest.guestTag}</TextField>
+                                {status === 'TIME' ? (
+                                    <View style={Styles.player}>
+                                        <Pressable onPress={() => handleChangeGuestTime(guest.id, 'SUB')}>
+                                            <TextField bold size={22}>-</TextField>
+                                        </Pressable>
+                                        <Clock />
+                                        <TextField>{guestsData[guest.id].timePlayed}</TextField>
+                                        <Pressable onPress={() => handleChangeGuestTime(guest.id, 'ADD')}>
+                                            <TextField bold size={20}>+</TextField>
+                                        </Pressable>
+                                    </View>
+                                ) : (
+                                    <TextField>R$ {guestsData[guest.id].amountOwed.toFixed(2).replace('.', ',')}</TextField>
+                                )}
                             </ListRow>
                         ))}
                     </ListContainer>
+                </View>
+                <View style={Styles.actions}>
+                    {status === 'PRICE' && <Button variant='OUTLINED' text='Refazer' action={() => setStatus('TIME')} />}
+                    <Button
+                        variant='FILL'
+                        text={status === 'TIME' ? 'Calcular' : 'Confirmar'}
+                        action={handleAction}
+                        style={{ maxWidth: 150 }}
+                    />
                 </View>
             </View>
         </InnerScreenContainer>
@@ -132,33 +266,18 @@ const Styles = StyleSheet.create({
         gap: 12,
         marginTop: 32,
     },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 16,
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-
-    },
-    evenRow: {
-        backgroundColor: '#FCF9D9',
-    },
-    oddRow: {
-        backgroundColor: '#FAFBFB',
-    },
-    firstRow: {
-        borderTopRightRadius: 32,
-        borderTopLeftRadius: 32,
-    },
-    lastRow: {
-        borderBottomLeftRadius: 32,
-        borderBottomRightRadius: 32,
-    },
     player: {
         flexDirection: 'row',
         gap: 16,
         alignItems: 'center',
     },
+    actions: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 24,
+        marginBottom: 24,
+    }
 });
 
 export default CreatePaymentList;
