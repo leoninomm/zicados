@@ -50,24 +50,26 @@ const SelectPayer = () => {
                     </View>
                     <Image source={Coin} style={Styles.icon} />
                 </View>
-                <ListContainer>
-                    {players.map((player, i) => (
-                        <Pressable
-                            onPress={() => setPayer(player)}
-                            key={player.uid}
-                            style={[
-                                Styles.row,
-                                (i % 2 === 0) ? Styles.evenRow : Styles.oddRow,
-                                (i === 0) && Styles.firstRow,
-                                (i === players.length - 1) && Styles.lastRow, 
-                            ]}
-                        >
-                            <Avatar photo={player.photoURL} size={44} />
-                            <TextField>{player.displayName}</TextField>
-                        </Pressable>
-                    ))}
-                </ListContainer>
-                <View style={{ alignItems: 'center', marginTop: 16 }}>
+                <View style={{ flex: 6 }}>
+                    <ListContainer>
+                        {players.map((player, i) => (
+                            <Pressable
+                                onPress={() => setPayer(player)}
+                                key={player.uid}
+                                style={[
+                                    Styles.row,
+                                    (i % 2 === 0) ? Styles.evenRow : Styles.oddRow,
+                                    (i === 0) && Styles.firstRow,
+                                    (i === players.length - 1) && Styles.lastRow, 
+                                ]}
+                            >
+                                <Avatar photo={player.photoURL} size={44} />
+                                <TextField>{player.displayName}</TextField>
+                            </Pressable>
+                        ))}
+                    </ListContainer>
+                </View>
+                <View style={{ alignItems: 'center', flex: 1 }}>
                     <Button variant='FILL' text='Confirmar' action={handleConfirm} />
                 </View>
             </View>
@@ -80,6 +82,7 @@ const Styles = StyleSheet.create({
         width: '100%',
         marginTop: 30,
         gap: 8,
+        flex: 1,
     },
     payerContainer: {
         width: '100%',
@@ -91,7 +94,7 @@ const Styles = StyleSheet.create({
         borderColor: '#2F1805',
         paddingVertical: 10,
         paddingHorizontal: 20,
-        marginBottom: 32,
+        marginBottom: 24,
     },
     icon: {
         height: 44,

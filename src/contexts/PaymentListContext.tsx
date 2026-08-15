@@ -2,7 +2,9 @@ import React, { createContext, JSX, useState } from 'react';
 
 type PaymentListContextType = {
     currentTab: number;
+    isPaymentDone: boolean;
     setCurrentTab: (tab: number) => void;
+    setIsPaymentDone: (b: boolean) => void;
 };
 
 type PaymentListProviderProps = {
@@ -13,15 +15,16 @@ export const PaymentListContext = createContext<PaymentListContextType>({} as Pa
 
 const paymentListContext = (): PaymentListContextType => {
     const [currentTab, setCurrentTab] = useState(0);
+    const [isPaymentDone, setIsPaymentDone] = useState(false);
 
-    return { currentTab, setCurrentTab };
+    return { currentTab, setCurrentTab, isPaymentDone, setIsPaymentDone };
 };
 
 const PaymentListProvider = ({ children }: PaymentListProviderProps) => {
-    const { currentTab, setCurrentTab } = paymentListContext();
+    const { currentTab, setCurrentTab, isPaymentDone, setIsPaymentDone } = paymentListContext();
 
     return (
-        <PaymentListContext.Provider value={{ currentTab, setCurrentTab }}>
+        <PaymentListContext.Provider value={{ currentTab, setCurrentTab, isPaymentDone, setIsPaymentDone }}>
             {children}
         </PaymentListContext.Provider>
     );

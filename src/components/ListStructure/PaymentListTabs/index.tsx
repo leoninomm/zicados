@@ -1,9 +1,16 @@
 import { useContext } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { closePaymentList } from '../../../store/paymentList/paymentListThunk';
 import { PaymentListContext } from '../../../contexts/PaymentListContext';
 import TextField from '../../Textfield';
+import Button from '../../Button';
 import DidPay from './DidPay';
 import DidNotPay from './DidNotPay';
+
+import type { AppDispatch } from '../../../store/store';
+import { Screens, Drawer } from '../../../utils/types';
 
 const TABS = [
     {
@@ -19,7 +26,14 @@ const TABS = [
 ];
 
 const PaymentListTabs = () => {
-    const { currentTab, setCurrentTab } = useContext(PaymentListContext);
+    const { currentTab, setCurrentTab, isPaymentDone } = useContext(PaymentListContext);
+    const dispatch = useDispatch<AppDispatch>();
+    const navigation = useNavigation();
+
+    const handleCloseList = () => {
+        dispatch(closePaymentList());
+        navigation.navigate(Screens.Drawer, { screen: Drawer.Home });
+    };
 
     return (
         <View style={Styles.container}>
@@ -31,7 +45,12 @@ const PaymentListTabs = () => {
                 ))}
             </View>
             <View style={{ flex: 1 }}>
-                {TABS[currentTab].component}
+                <View style={{ flex: 6 }}>
+                    {TABS[currentTab].component}
+                </View>
+                <View style={{ width: '100%', alignItems: 'center', flex: 1, marginTop: 16 }}>
+                    <Button text='Fechar lista' action={handleCloseList} variant='FILL' disabled={!isPaymentDone} />
+                </View>
             </View>
         </View>
     );

@@ -44,6 +44,8 @@ const CreatePaymentList = () => {
     useEffect(() => {
         const dfPrice = remoteConfig().getValue(FBConfig.Price).asString();
         const dfPlayTime = remoteConfig().getValue(FBConfig.PlayTime).asString();
+
+        console.log(dfPlayTime);
         
         setPrice(dfPrice);
         setPlayTime(dfPlayTime);
@@ -57,7 +59,7 @@ const CreatePaymentList = () => {
     }, []);
     
     useEffect(() => {
-        if (players.length && !playersReady) {
+        if (players.length && !playersReady && playTime) {
             let dfPlayersData: PlayersData = {};
             players.map((player) => {
                 dfPlayersData[player.uid] = {
@@ -70,10 +72,10 @@ const CreatePaymentList = () => {
             setPlayersData(dfPlayersData);
             setPlayersReady(true);
         }
-    }, [players]);
+    }, [players, playTime]);
 
     useEffect(() => {
-        if (guests.length && !guestsReady) {
+        if (guests.length && !guestsReady && playTime) {
             let dfGuestsData: GuestsData = {};
             guests.map((guest) => {
                 dfGuestsData[guest.id] = {
@@ -86,7 +88,7 @@ const CreatePaymentList = () => {
             setGuestsData(dfGuestsData);
             setGuestsReady(true);
         }
-    }, [guests]);
+    }, [guests, playTime]);
 
     const handlePrice = (price: string) => {
         const newPrice = formatCurrency(price);
@@ -139,7 +141,7 @@ const CreatePaymentList = () => {
 
     const handleConfirm = () => {
         dispatch(setPaymentListPlayers(Object.values(playersData), Object.values(guestsData), paymentInfo, price));
-        // navigation.navigate(Screens.Drawer, { screen: Drawer.PaymentList });
+        navigation.navigate(Screens.Drawer, { screen: Drawer.PaymentList });
     };
 
     const handleAction = () => {
@@ -179,13 +181,13 @@ const CreatePaymentList = () => {
                                     <TextField>{player.displayName}</TextField>
                                 </View>
                                 {status === 'TIME' ? (
-                                    <View style={Styles.player}>
-                                        <Pressable onPress={() => handleChangePlayerTime(player.uid, 'SUB')}>
+                                    <View style={Styles.timeSecction}>
+                                        <Pressable onPress={() => handleChangePlayerTime(player.uid, 'SUB')} style={Styles.timeButton}>
                                             <TextField bold size={22}>-</TextField>
                                         </Pressable>
                                         <Clock />
                                         <TextField>{playersData[player.uid].timePlayed}</TextField>
-                                        <Pressable onPress={() => handleChangePlayerTime(player.uid, 'ADD')}>
+                                        <Pressable onPress={() => handleChangePlayerTime(player.uid, 'ADD')} style={Styles.timeButton}>
                                             <TextField bold size={20}>+</TextField>
                                         </Pressable>
                                     </View>
@@ -198,13 +200,13 @@ const CreatePaymentList = () => {
                             <ListRow index={i + 1} isLast={i + players.length === totalAttending} key={guest.guestName}>
                                 <TextField>{guest.guestTag}</TextField>
                                 {status === 'TIME' ? (
-                                    <View style={Styles.player}>
-                                        <Pressable onPress={() => handleChangeGuestTime(guest.id, 'SUB')}>
+                                    <View style={Styles.timeSecction}>
+                                        <Pressable onPress={() => handleChangeGuestTime(guest.id, 'SUB')} style={Styles.timeButton}>
                                             <TextField bold size={22}>-</TextField>
                                         </Pressable>
                                         <Clock />
                                         <TextField>{guestsData[guest.id].timePlayed}</TextField>
-                                        <Pressable onPress={() => handleChangeGuestTime(guest.id, 'ADD')}>
+                                        <Pressable onPress={() => handleChangeGuestTime(guest.id, 'ADD')} style={Styles.timeButton}>
                                             <TextField bold size={20}>+</TextField>
                                         </Pressable>
                                     </View>
@@ -277,7 +279,17 @@ const Styles = StyleSheet.create({
         justifyContent: 'center',
         gap: 24,
         marginBottom: 24,
-    }
+    },
+    timeSecction: {
+        flexDirection: 'row',
+        gap: 4,
+        alignItems: 'center',
+    },
+    timeButton: {
+        height: 32,
+        width: 32,
+        alignItems: 'center',
+    },
 });
 
 export default CreatePaymentList;

@@ -21,12 +21,18 @@ const Button = ({
         action(e);
     };
 
+    const getTextColor = () => {
+        if (disabled) return 'white';
+        else if (variant === 'OUTLINED') return '#C62828';
+        else return 'black';
+    };
+
     return (
         <Pressable
             onPress={(e: any) => handleAction(e)}
-            style={[Styles.button, variant === 'FILL' ? Styles.fill : Styles.outline, style]}
+            style={[Styles.button, variant === 'FILL' ? Styles.fill : Styles.outline, style, disabled && Styles.disabled]}
         >
-            <TextField color={variant === 'FILL' ? 'black' : '#C62828'}>{text}</TextField>
+            <TextField color={getTextColor()}>{text}</TextField>
         </Pressable>
     );
 };
@@ -47,6 +53,10 @@ const Styles = StyleSheet.create({
     fill: {
         borderColor: '#030626',
         backgroundColor: '#F2B705'
+    },
+    disabled: {
+        borderColor: 'white',
+        backgroundColor: '#b2b2b2'
     }
 });
 

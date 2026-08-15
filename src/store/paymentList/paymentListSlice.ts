@@ -6,6 +6,7 @@ export interface PaymentListState {
     players: PaymentListPlayer[],
     guests: PaymentListGuest[],
     fetched: boolean,
+    playersFetched: boolean,
     guestsFetched: boolean,
     loading: boolean,
     error: string,
@@ -16,6 +17,7 @@ const initialState: PaymentListState = {
     players: [],
     guests: [],
     fetched: false,
+    playersFetched: false,
     guestsFetched: false,
     loading: false,
     error: '',
@@ -66,6 +68,7 @@ export const paymentListSlice = createSlice({
             console.log(action.payload);
             state.loading = false;
             state.players = action.payload;
+            state.playersFetched = true;
             state.error = '';
         },
         fetchPlayersFailed: (state, action: PayloadAction<string>) => {

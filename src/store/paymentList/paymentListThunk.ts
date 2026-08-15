@@ -126,7 +126,6 @@ export const getPaymentListPlayers = () => async (dispatch: AppDispatch, getStat
             const playersRef = collection(db, FBCollections.PaymentList, paymentList.id, FBCollections.PlayersCol);
         
             onSnapshot(playersRef, (snap: any) => {
-                console.log(snap);
                 if (!snap._docs.length) dispatch(fetchPlayersSuccess([]))
                 else {
                     const players = snap._docs.map((doc: any) => doc._data);
@@ -164,4 +163,50 @@ export const getPaymentListGuests = () => async (dispatch: AppDispatch, getState
     } catch (error) {
         dispatch(fetchPlayersFailed((error as Error).message));
     };
-}
+};
+
+export const updatePlayerPaymentStatus = (player: string, newStatus: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+
+    const { paymentList } = state.paymentListReducer;
+
+    if (paymentList) {
+        const db = getFirestore();
+
+        const playerRef = doc(collection(db, FBCollections.PaymentList, paymentList.id, FBCollections.PlayersCol), player);
+        await updateDoc(playerRef, {
+            payed: newStatus,
+        });
+    };
+};
+
+export const updateGuestPaymentStatus = (guest: string, newStatus: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+
+    const { paymentList } = state.paymentListReducer;
+
+    if (paymentList) {
+        const db = getFirestore();
+
+        const guestRef = doc(collection(db, FBCollections.PaymentList, paymentList.id, FBCollections.GuestsCol), guest);
+        await updateDoc(guestRef, {
+            payed: newStatus,
+        });
+    };
+};
+
+export const closePaymentList = () => async (dispatch: AppDispatch, getState: () => RootState) => {
+    const state = getState();
+
+    const { paymentList } = state.paymentListReducer;
+
+    if (paymentList) {
+        const db = getFirestore();
+
+        const paymentListRef = doc(collection(db, FBCollections.PaymentList), paymentList.id);
+
+        await updateDoc(paymentListRef, {
+            isClosed: true,
+        });
+    };
+};

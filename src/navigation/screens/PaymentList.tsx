@@ -14,18 +14,18 @@ import type { RootState, AppDispatch } from '../../store/store';
 const PaymentList = () => {
     const [initializing, setInitializing] = useState(true);
     const { user } = useSelector((state: RootState) => state.authReducer);
-    const { paymentList, players, guestsFetched } = useSelector((state: RootState) => state.paymentListReducer);
+    const { paymentList, playersFetched, guestsFetched } = useSelector((state: RootState) => state.paymentListReducer);
 
     const dispatch = useDispatch<AppDispatch>();
     const isUserPayer = user?.uid === paymentList?.payer;
 
     useEffect(() => {
-        if (!players.length) dispatch(getPaymentListPlayers())
+        if (!playersFetched) dispatch(getPaymentListPlayers())
 
         if (!guestsFetched) dispatch(getPaymentListGuests());
         
         setTimeout(() => setInitializing(false), 2000);
-    }, [players, guestsFetched]);
+    }, [playersFetched, guestsFetched]);
 
     const getPaymentState = () => {
         if (!paymentList) return <PaymentStates variant='EMPTY' />;
